@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoBoom — Privacy Policy</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0d1117;
+            color: #c9d1d9;
+            line-height: 1.7;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 32px;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #8b949e;
+            font-size: 14px;
+            margin-bottom: 40px;
+        }
+
+        h2 {
+            font-size: 20px;
+            color: #fff;
+            margin: 32px 0 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #21262d;
+        }
+
+        p,
+        li {
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+
+        ul {
+            padding-left: 24px;
+        }
+
+        a {
+            color: #58a6ff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        strong {
+            color: #e6edf3;
+        }
+
+        .highlight {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin: 16px 0;
+        }
+
+        footer {
+            margin-top: 48px;
+            padding-top: 20px;
+            border-top: 1px solid #21262d;
+            color: #8b949e;
+            font-size: 13px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <h1>🚀 AutoBoom — Privacy Policy</h1>
+        <p class="subtitle">Last updated: February 27, 2026</p>
+
+        <div class="highlight">
+            <strong>Summary:</strong> AutoBoom collects only your email address for authentication.
+            We do not sell, share, or monetize your personal data. All generation data stays
+            within Google Flow — we never access or store your images or videos.
+        </div>
+
+        <h2>1. What We Collect</h2>
+        <p>We collect the minimum data necessary to provide the service:</p>
+        <ul>
+            <li><strong>Email address</strong> — Used solely for account authentication via Supabase Auth (magic link /
+                OTP login).</li>
+            <li><strong>Daily usage count</strong> — A numeric counter of prompts submitted per day, used to enforce
+                free-tier limits (10 prompts/day). No prompt content is stored.</li>
+            <li><strong>Subscription status</strong> — Whether your account is on the Free or Premium plan, managed via
+                Stripe.</li>
+        </ul>
+
+        <h2>2. What We Do NOT Collect</h2>
+        <ul>
+            <li>❌ We do <strong>not</strong> collect, store, or transmit your prompts, images, or videos.</li>
+            <li>❌ We do <strong>not</strong> track browsing history or activity outside of Google Flow.</li>
+            <li>❌ We do <strong>not</strong> use cookies, analytics, or third-party tracking.</li>
+            <li>❌ We do <strong>not</strong> sell or share your data with third parties.</li>
+        </ul>
+
+        <h2>3. How Data Is Stored</h2>
+        <ul>
+            <li><strong>Authentication & usage data</strong> — Stored securely in <a href="https://supabase.com"
+                    target="_blank">Supabase</a> (hosted on AWS, SOC 2 compliant).</li>
+            <li><strong>Payment data</strong> — Processed by <a href="https://stripe.com" target="_blank">Stripe</a>. We
+                never see or store your card details.</li>
+            <li><strong>Local extension data</strong> — Project settings and session data are stored in
+                <code>chrome.storage.local</code> on your device only.
+            </li>
+        </ul>
+
+        <h2>4. Permissions Explained</h2>
+        <p>AutoBoom requests the following Chrome permissions:</p>
+        <ul>
+            <li><strong>activeTab, tabs</strong> — To interact with Google Flow tabs and send automation commands.</li>
+            <li><strong>scripting</strong> — To enter text into Google Flow's editor (Slate-based rich text input).</li>
+            <li><strong>debugger</strong> — To dispatch low-level input events (mouse clicks, key presses) required by
+                Google Flow's UI framework.</li>
+            <li><strong>storage</strong> — To save your project settings and authentication session locally.</li>
+            <li><strong>downloads</strong> — To download generated images and videos to your computer.</li>
+            <li><strong>alarms</strong> — To keep the background service worker alive during long generation tasks.</li>
+            <li><strong>sidePanel</strong> — To display the AutoBoom interface as a Chrome side panel.</li>
+        </ul>
+
+        <h2>5. Third-Party Services</h2>
+        <p>AutoBoom integrates with the following services:</p>
+        <ul>
+            <li><strong>Google Flow</strong> (labs.google) — The target platform for automation. Your content stays
+                within Google's infrastructure.</li>
+            <li><strong>Supabase</strong> — Authentication and usage tracking.</li>
+            <li><strong>Stripe</strong> — Payment processing for Premium subscriptions.</li>
+            <li><strong>AI APIs</strong> (optional) — If you enable AI prompt rewriting, your prompt text may be sent to
+                the AI provider you select (DeepSeek, OpenAI, Google Gemini, Anthropic, or OpenRouter). This is opt-in
+                only.</li>
+            <li><strong>Telegram</strong> (optional) — If you configure Telegram notifications, completion alerts are
+                sent to your bot.</li>
+        </ul>
+
+        <h2>6. Data Retention</h2>
+        <ul>
+            <li>Account data is retained while your account is active.</li>
+            <li>Daily usage counters reset automatically every 24 hours.</li>
+            <li>You can request account deletion by contacting us at the email below.</li>
+        </ul>
+
+        <h2>7. Your Rights</h2>
+        <p>You have the right to:</p>
+        <ul>
+            <li>Request access to your stored data.</li>
+            <li>Request deletion of your account and all associated data.</li>
+            <li>Uninstall the extension at any time, which removes all local data.</li>
+        </ul>
+
+        <h2>8. Changes to This Policy</h2>
+        <p>We may update this policy from time to time. Changes will be posted on this page with an updated date.
+            Continued use of AutoBoom after changes constitutes acceptance.</p>
+
+        <h2>9. Contact</h2>
+        <p>For questions or requests regarding your data, contact us at:</p>
+        <p><strong>📧 buildwithcortex@gmail.com</strong></p>
+
+        <footer>
+            © 2026 AutoBoom. All rights reserved.
+        </footer>
+
+    </div>
+</body>
+
+</html>
