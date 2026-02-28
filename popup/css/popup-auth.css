@@ -1,0 +1,930 @@
+/* ═══════════════════════════════════════════════════════
+   AutoBoom — Auth & Premium Styles
+   Login screen, OTP input, premium card, feature locks
+   ═══════════════════════════════════════════════════════ */
+
+/* ─── Auth Screen (full-page overlay) ─── */
+.auth-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-primary);
+    padding: 32px 24px;
+    text-align: center;
+    overflow-y: auto;
+    animation: authFadeIn 0.3s ease;
+}
+
+@keyframes authFadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Close button */
+.auth-close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 8px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-close-btn:hover {
+    background: var(--danger-light);
+    color: var(--danger);
+    border-color: var(--danger);
+}
+
+.auth-logo {
+    font-size: 48px;
+    margin-bottom: 8px;
+    animation: logoFloat 3s ease-in-out infinite;
+}
+
+@keyframes logoFloat {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-3px);
+    }
+}
+
+.auth-brand h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+    margin: 0;
+}
+
+.auth-brand p {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+/* ─── Auth Card ─── */
+.auth-card {
+    width: 100%;
+    max-width: 320px;
+    margin-top: 24px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 28px 24px;
+    box-shadow: var(--shadow-md);
+    animation: cardSlideUp 0.4s ease;
+}
+
+@keyframes cardSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.auth-card h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.auth-card .auth-subtitle {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+/* ─── Email Input ─── */
+.auth-email-group {
+    margin-bottom: 14px;
+}
+
+.auth-email-input {
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--bg-input);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: 14px;
+    font-family: var(--font);
+    transition: all var(--transition);
+}
+
+.auth-email-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: var(--shadow-glow);
+    background: var(--bg-secondary);
+}
+
+.auth-email-input::placeholder {
+    color: var(--text-muted);
+}
+
+/* ─── Auth Submit Button ─── */
+.auth-submit-btn {
+    width: 100%;
+    padding: 12px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 15px;
+    font-weight: 600;
+    font-family: var(--font);
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.auth-submit-btn:hover:not(:disabled) {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(229, 57, 53, 0.3);
+}
+
+.auth-submit-btn:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+.auth-submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Skip text */
+.auth-skip-text {
+    margin-top: 20px;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.auth-submit-btn.loading {
+    position: relative;
+    color: transparent;
+}
+
+.auth-submit-btn.loading::after {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: authSpin 0.6s linear infinite;
+}
+
+@keyframes authSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ─── OTP Input (8 separate digit boxes) ─── */
+.otp-group {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+    margin: 20px 0 16px;
+}
+
+.otp-digit {
+    width: 36px;
+    height: 44px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 700;
+    font-family: var(--font);
+    background: var(--bg-input);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    transition: all var(--transition);
+    caret-color: var(--accent);
+}
+
+.otp-digit:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: var(--shadow-glow);
+    background: var(--bg-secondary);
+}
+
+.auth-otp-email {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+}
+
+.auth-otp-email strong {
+    color: var(--accent);
+}
+
+.auth-back-link {
+    display: inline-block;
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--text-muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font);
+    transition: color var(--transition);
+}
+
+.auth-back-link:hover {
+    color: var(--accent);
+}
+
+/* ─── Premium Upgrade Banner (compact) ─── */
+.premium-banner {
+    margin: 8px 12px;
+    padding: 10px 14px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, #FFF8E1 0%, #FFF3E0 50%, #FFE8CC 100%);
+    border: 1px solid rgba(245, 124, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+body.theme-dark .premium-banner {
+    background: linear-gradient(135deg, rgba(245, 124, 0, 0.05) 0%, rgba(255, 152, 0, 0.08) 100%);
+    border-color: rgba(255, 152, 0, 0.2);
+}
+
+.premium-banner-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.premium-plan-label {
+    font-size: 11px;
+    font-weight: 800;
+    color: #E65100;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+body.theme-dark .premium-plan-label {
+    color: #FFB74D;
+}
+
+.premium-usage {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.premium-locked-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.locked-pill {
+    padding: 2px 8px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+.premium-banner-cta {
+    width: 100%;
+    padding: 9px 16px;
+    background: linear-gradient(135deg, #E65100, #F57C00, #FFA726);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 700;
+    font-family: var(--font);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(230, 81, 0, 0.2);
+}
+
+.premium-banner-cta:hover {
+    background: linear-gradient(135deg, #BF360C, #E65100, #F57C00);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(230, 81, 0, 0.3);
+}
+
+.premium-banner-cta:active {
+    transform: translateY(0);
+}
+
+.premium-banner-cta:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ─── Usage Counter ─── */
+.usage-counter {
+    font-size: 12px;
+    color: var(--text-secondary);
+    padding: 2px 8px;
+    background: var(--bg-card);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    margin-left: 8px;
+    font-weight: 500;
+}
+
+.usage-counter.usage-limit-warning {
+    color: var(--warning);
+    border-color: var(--warning);
+    background: var(--warning-light);
+}
+
+.usage-counter.usage-limit-reached {
+    color: var(--danger);
+    border-color: var(--danger);
+    background: var(--danger-light);
+    font-weight: 600;
+}
+
+/* ─── Premium Lock Feature ─── */
+.premium-lock {
+    font-size: 10px;
+    color: var(--warning);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* ─── Premium Nudge Modal ─── */
+.nudge-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.15s ease;
+}
+
+.nudge-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    max-width: 280px;
+    width: 90%;
+    text-align: center;
+    box-shadow: var(--shadow-lg);
+    animation: nudgeSlideIn 0.25s ease-out;
+}
+
+@keyframes nudgeSlideIn {
+    from {
+        transform: scale(0.95) translateY(10px);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+    }
+}
+
+.nudge-icon {
+    font-size: 40px;
+    margin-bottom: 8px;
+}
+
+.nudge-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.nudge-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    line-height: 1.5;
+}
+
+.nudge-btn-upgrade {
+    width: 100%;
+    padding: 10px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 600;
+    font-family: var(--font);
+    cursor: pointer;
+    transition: all var(--transition);
+    margin-bottom: 8px;
+}
+
+.nudge-btn-upgrade:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+}
+
+.nudge-close {
+    width: 100%;
+    padding: 8px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--text-muted);
+    font-size: 12px;
+    font-family: var(--font);
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.nudge-close:hover {
+    border-color: var(--text-secondary);
+    color: var(--text-secondary);
+}
+
+/* ─── Premium Badge (header) ─── */
+.premium-header-badge {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+    background: var(--accent-light);
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+/* ─── Account Section (settings) ─── */
+.account-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.account-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+}
+
+.account-label {
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.account-value {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.plan-badge {
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.plan-badge.plan-free {
+    background: var(--bg-input);
+    color: var(--text-secondary);
+}
+
+.plan-badge.plan-premium {
+    background: var(--accent-light);
+    color: var(--accent);
+}
+
+/* ─── Sign In / Out buttons ─── */
+.btn-sign-out {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-family: var(--font);
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.btn-sign-out:hover {
+    border-color: var(--danger);
+    color: var(--danger);
+    background: var(--danger-light);
+}
+
+.btn-sign-in {
+    width: 100%;
+    padding: 10px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+    font-family: var(--font);
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.btn-sign-in:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(229, 57, 53, 0.25);
+}
+
+/* ─── Inline Upgrade Auth Form ─── */
+.upgrade-auth-form {
+    position: relative;
+    margin-top: 8px;
+    padding: 16px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    animation: cardSlideUp 0.3s ease;
+}
+
+.upgrade-auth-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.upgrade-auth-label strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.upgrade-auth-row {
+    display: flex;
+    gap: 8px;
+    align-items: stretch;
+}
+
+.upgrade-input {
+    flex: 1;
+    padding: 8px 12px;
+    background: rgba(245, 124, 0, 0.04);
+    border: 1.5px solid rgba(245, 124, 0, 0.2);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-size: 13px;
+    font-family: var(--font);
+    transition: all var(--transition);
+}
+
+body.theme-dark .upgrade-input {
+    background: rgba(255, 152, 0, 0.06);
+    border-color: rgba(255, 152, 0, 0.25);
+}
+
+.upgrade-input:focus {
+    outline: none;
+    border-color: #F57C00;
+    box-shadow: 0 0 0 2px rgba(245, 124, 0, 0.12);
+}
+
+.upgrade-input::placeholder {
+    color: var(--text-muted);
+}
+
+.upgrade-action-btn {
+    padding: 8px 14px;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: linear-gradient(135deg, #E65100, #F57C00);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: var(--font);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all var(--transition);
+    white-space: nowrap;
+    box-shadow: 0 2px 6px rgba(230, 81, 0, 0.2);
+}
+
+.upgrade-action-btn:hover {
+    background: linear-gradient(135deg, #BF360C, #E65100);
+    transform: translateY(-1px);
+}
+
+.upgrade-action-btn:active {
+    transform: translateY(0);
+}
+
+.upgrade-action-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.upgrade-action-btn svg {
+    flex-shrink: 0;
+}
+
+/* ─── How-To Button (inline in section headers) ─── */
+.howto-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: var(--bg-input);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all var(--transition);
+    padding: 0;
+    margin-left: 6px;
+    vertical-align: middle;
+    flex-shrink: 0;
+}
+
+.howto-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-light);
+}
+
+/* How-To labeled button (in action bars) */
+.howto-btn-label {
+    margin-right: auto;
+    color: var(--text-muted) !important;
+    border-color: var(--border) !important;
+    font-size: 10px !important;
+    padding: 3px 8px !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.3px;
+}
+
+.howto-btn-label:hover {
+    color: var(--text-primary) !important;
+    background: var(--bg-input) !important;
+    border-color: var(--text-muted) !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* ─── How-To Modal ─── */
+.howto-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.15s ease;
+}
+
+.howto-modal.hidden {
+    display: none;
+}
+
+.howto-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 0;
+    max-width: 340px;
+    width: 92%;
+    box-shadow: var(--shadow-lg);
+    animation: nudgeSlideIn 0.25s ease-out;
+    overflow: hidden;
+}
+
+.howto-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-input);
+}
+
+.howto-header h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.howto-header .auth-close-btn {
+    position: static;
+    width: 28px;
+    height: 28px;
+    padding: 6px;
+}
+
+.howto-body {
+    padding: 20px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    max-height: 350px;
+    overflow-y: auto;
+}
+
+.howto-body ol {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.howto-body li {
+    margin-bottom: 10px;
+}
+
+.howto-body strong {
+    color: var(--text-primary);
+}
+
+.howto-body code {
+    font-size: 11px;
+    background: var(--bg-input);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--accent);
+    font-family: monospace;
+}
+
+/* ─── Premium Nudge Modal (overlay) ─── */
+.premium-nudge-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    padding: 20px;
+}
+
+.premium-nudge-modal.hidden {
+    display: none !important;
+}
+
+.premium-nudge-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 24px;
+    text-align: center;
+    max-width: 320px;
+    width: 100%;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.25);
+    animation: nudge-pop 0.2s ease-out;
+}
+
+@keyframes nudge-pop {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.nudge-icon {
+    font-size: 40px;
+    margin-bottom: 8px;
+}
+
+.premium-nudge-card h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+}
+
+.premium-nudge-card p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+    line-height: 1.5;
+}
+
+.btn-nudge-upgrade {
+    display: block;
+    width: 100%;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #E65100, #F57C00, #FF9800);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 700;
+    font-family: var(--font);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 3px 12px rgba(230, 81, 0, 0.3);
+    margin-bottom: 10px;
+}
+
+.btn-nudge-upgrade:hover {
+    background: linear-gradient(135deg, #BF360C, #E65100, #F57C00);
+    transform: translateY(-1px);
+    box-shadow: 0 5px 20px rgba(230, 81, 0, 0.4);
+}
+
+.nudge-close {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 12px;
+    font-family: var(--font);
+    cursor: pointer;
+    padding: 4px 8px;
+}
+
+.nudge-close:hover {
+    color: var(--text-primary);
+}
+
+/* ─── Feature Locked (greyed out for free users) ─── */
+.feature-locked {
+    opacity: 0.45;
+    pointer-events: none;
+    position: relative;
+    filter: grayscale(0.3);
+}
+
+/* Re-enable click on locked items so the nudge can trigger */
+[data-premium-feature].feature-locked {
+    pointer-events: auto;
+}
+
+/* But disable child inputs/buttons */
+.feature-locked input,
+.feature-locked textarea,
+.feature-locked select,
+.feature-locked button:not([data-premium-feature]) {
+    pointer-events: none;
+}
+
+/* Home manage links that are locked — just dim, keep clickable for nudge */
+.home-manage-link.feature-locked {
+    opacity: 0.5;
+    filter: none;
+    pointer-events: auto;
+}
+
+/* Save-to-batch buttons when locked */
+.t2v-batch-btn.feature-locked,
+button[data-premium-feature="batch_queue"].feature-locked {
+    opacity: 0.45;
+    filter: grayscale(0.3);
+    pointer-events: auto;
+}

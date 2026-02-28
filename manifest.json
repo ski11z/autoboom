@@ -1,0 +1,70 @@
+{
+  "manifest_version": 3,
+  "name": "AutoBoom - Google Flow Automation",
+  "version": "1.0.0",
+  "description": "Automate batch image and video generation in Google Flow. Fast-fire prompts, chain mode, and AI prompt rewriting.",
+  "permissions": [
+    "storage",
+    "downloads",
+    "alarms",
+    "activeTab",
+    "tabs",
+    "scripting",
+    "sidePanel"
+  ],
+  "host_permissions": [
+    "https://labs.google/*",
+    "https://api.deepseek.com/*",
+    "https://api.openai.com/*",
+    "https://generativelanguage.googleapis.com/*",
+    "https://api.anthropic.com/*",
+    "https://openrouter.ai/*",
+    "https://api.telegram.org/*",
+    "https://*.supabase.co/*",
+    "https://discord.com/*"
+  ],
+  "background": {
+    "service_worker": "background/service-worker.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://labs.google/fx/*",
+        "https://labs.google/flow/*"
+      ],
+      "js": [
+        "shared/constants.js",
+        "shared/events.js",
+        "shared/logger.js",
+        "content/selectors.js",
+        "content/auto-healer.js",
+        "content/dom-bridge.js",
+        "content/observers.js",
+        "content/diagnostics.js",
+        "content/actions/navigation.js",
+        "content/actions/upload.js",
+        "content/actions/image-gen.js",
+        "content/actions/video-gen.js",
+        "content/stealth-overlay.js",
+        "content/content-script.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "side_panel": {
+    "default_path": "popup/popup.html"
+  },
+  "action": {
+    "default_title": "AutoBoom",
+    "default_icon": {
+      "16": "assets/icons/icon16.png",
+      "48": "assets/icons/icon48.png",
+      "128": "assets/icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "assets/icons/icon16.png",
+    "48": "assets/icons/icon48.png",
+    "128": "assets/icons/icon128.png"
+  }
+}

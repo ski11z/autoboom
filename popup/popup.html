@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoBoom</title>
+  <link rel="stylesheet" href="css/popup-base.css">
+  <link rel="stylesheet" href="css/popup-components.css">
+  <link rel="stylesheet" href="css/popup-progress.css">
+  <link rel="stylesheet" href="css/popup-views.css">
+  <link rel="stylesheet" href="css/popup-auth.css">
+</head>
+
+<body>
+  <!-- ═══ Auth Screen (shown before main UI) ═══ -->
+  <div id="auth-screen" class="auth-screen hidden">
+    <button id="auth-close-btn" class="auth-close-btn" title="Close">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 6 6 18" />
+        <path d="m6 6 12 12" />
+      </svg>
+    </button>
+    <div class="auth-logo"><img src="../assets/logo/logo.png" alt="AutoBoom"
+        style="width:48px;height:48px;object-fit:contain;"></div>
+    <div class="auth-brand">
+      <h1>AutoBoom</h1>
+      <p>Automate your Google Flow workflows</p>
+    </div>
+
+    <div class="auth-card">
+      <!-- Step 1: Email Input -->
+      <div id="auth-step-email">
+        <h2>Welcome</h2>
+        <p class="auth-subtitle">Sign in or create an account to sync your data</p>
+        <form id="auth-email-form">
+          <div class="auth-email-group">
+            <input type="email" id="auth-email-input" class="auth-email-input" placeholder="your@email.com" required
+              autocomplete="email" />
+          </div>
+          <button type="submit" id="auth-email-btn" class="auth-submit-btn">Continue</button>
+        </form>
+      </div>
+
+      <!-- Step 2: OTP Verification -->
+      <div id="auth-step-otp" class="hidden">
+        <h2>Check your inbox</h2>
+        <p class="auth-otp-email">We sent a code to <strong id="auth-otp-email-display"></strong></p>
+        <form id="auth-otp-form">
+          <div class="otp-group">
+            <input type="text" class="otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric"
+              autocomplete="one-time-code" />
+            <input type="text" class="otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" />
+            <input type="text" class="otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" />
+            <input type="text" class="otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" />
+            <input type="text" class="otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" />
+            <input type="text" class="otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" />
+            <input type="text" class="otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" />
+            <input type="text" class="otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" />
+          </div>
+          <button type="submit" id="auth-otp-btn" class="auth-submit-btn">Verify</button>
+        </form>
+        <button id="auth-otp-back" class="auth-back-link">← Use a different email</button>
+      </div>
+    </div>
+
+    <p class="auth-skip-text">You can use AutoBoom without signing in</p>
+  </div>
+
+  <!-- Wrong Domain Overlay (hidden by default, shown via JS) -->
+  <div id="wrong-domain-overlay" class="wrong-domain-overlay hidden">
+    <div class="wrong-domain-content">
+      <div class="wrong-domain-icon"><img src="../assets/logo/logo.png" alt="AutoBoom"
+          style="width:64px;height:64px;object-fit:contain;"></div>
+      <h2>AutoBoom</h2>
+      <p class="wrong-domain-msg">This extension only works on <strong>Google Flow</strong>.</p>
+      <p class="wrong-domain-hint">Navigate to the Flow tool to start automating your image-to-video workflows.</p>
+      <button id="btn-go-to-flow" class="btn btn-primary btn-go-flow">
+        Open Google Flow →
+      </button>
+    </div>
+  </div>
+
+  <div class="popup-container">
+    <!-- Header -->
+    <header class="popup-header">
+      <div class="header-left">
+        <img src="../assets/logo/logo.png" alt="AutoBoom" class="logo-img" />
+        <div class="header-title">
+          <h1>AutoBoom</h1>
+          <span class="version">Google Flow Automation</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="stealth-mode-btn" class="icon-btn" title="Stealth Mode" data-premium-feature="stealth_mode">
+          <span class="stealth-btn-icon">👻</span>
+          <input type="checkbox" id="stealth-mode-toggle" class="stealth-hidden-input">
+        </button>
+        <button id="btn-theme-toggle" class="icon-btn" title="Toggle Light/Dark Theme">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+          </svg>
+        </button>
+        <button id="btn-help" class="icon-btn" title="Help Center">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+            <line x1="12" y1="17" x2="12.01" y2="17" />
+          </svg>
+        </button>
+        <button id="btn-settings" class="icon-btn" title="Settings">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3" />
+            <path
+              d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+          </svg>
+        </button>
+        <button id="btn-user-login" class="icon-btn icon-btn-user" title="Sign In / Account">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Connection Status -->
+    <div id="connection-status" class="status-bar status-disconnected">
+      <span class="status-dot"></span>
+      <span id="status-text">Checking connection...</span>
+      <span id="credits-badge" class="credits-badge hidden" title="Flow Credits">💎 —</span>
+      <span id="usage-counter" class="usage-counter hidden"></span>
+      <span id="premium-badge" class="premium-header-badge hidden">⭐ PRO</span>
+    </div>
+
+    <!-- Home Screen (default landing) -->
+    <section id="home-screen" class="home-screen">
+
+      <!-- Premium Upgrade Banner (compact) -->
+      <div id="premium-upgrade-card" class="premium-banner hidden">
+        <!-- Header row -->
+        <div class="premium-banner-header">
+          <span class="premium-plan-label">FREE PLAN</span>
+          <span class="premium-usage" id="premium-usage-compact">0/10 prompts today</span>
+        </div>
+
+        <!-- Locked features -->
+        <div class="premium-locked-features">
+          <span class="locked-pill">🔒 Unlimited</span>
+          <span class="locked-pill">🔒 AI Parser</span>
+          <span class="locked-pill">🔒 Batch</span>
+          <span class="locked-pill">🔒 Stealth</span>
+          <span class="locked-pill">🔒 Auto-Download</span>
+        </div>
+
+        <!-- CTA -->
+        <button id="btn-upgrade" class="premium-banner-cta">
+          👑 Upgrade to Pro — $9.99/mo
+        </button>
+
+        <!-- Inline Auth (hidden, revealed on click when anonymous) -->
+        <div id="upgrade-auth-form" class="upgrade-auth-form hidden">
+          <div id="upgrade-step-email" class="upgrade-auth-step">
+            <p class="upgrade-auth-label">✉️ Enter your email to get started</p>
+            <div class="upgrade-auth-row">
+              <input type="email" id="upgrade-email-input" class="upgrade-input" placeholder="your@email.com"
+                autocomplete="email" />
+              <button id="upgrade-email-btn" class="upgrade-action-btn">Send →</button>
+            </div>
+          </div>
+          <div id="upgrade-step-otp" class="upgrade-auth-step hidden">
+            <p class="upgrade-auth-label">🔑 Code sent to <strong id="upgrade-otp-email-display"></strong></p>
+            <div class="upgrade-auth-row">
+              <input type="text" id="upgrade-otp-input" class="upgrade-input" placeholder="Enter 6-digit code"
+                maxlength="8" inputmode="numeric" autocomplete="one-time-code" />
+              <button id="upgrade-otp-btn" class="upgrade-action-btn">Verify ✓</button>
+            </div>
+            <button id="upgrade-otp-back" class="upgrade-back-btn">← Different email</button>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Project Setup Card -->
+      <div class="home-setup-card">
+        <div class="setup-header">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 20h9" />
+            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+          </svg>
+          <span>Project Setup</span>
+        </div>
+
+        <div class="setup-field">
+          <label for="home-project-name">Project Name</label>
+          <input type="text" id="home-project-name" placeholder="e.g. Product Showcase Batch" />
+        </div>
+
+        <div class="setup-row">
+          <div class="setup-field">
+            <label for="home-aspect-ratio">Aspect Ratio</label>
+            <select id="home-aspect-ratio">
+              <option value="9:16" selected>9:16 Portrait</option>
+              <option value="16:9">16:9 Landscape</option>
+            </select>
+          </div>
+          <div class="setup-field">
+            <label for="home-output-count">Outputs / Prompt</label>
+            <select id="home-output-count">
+              <option value="1" selected>1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mode Selection -->
+      <div class="mode-section">
+        <div class="mode-section-label">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 16v-4" />
+            <path d="M12 8h.01" />
+          </svg>
+          <span>Select Mode</span>
+        </div>
+
+        <div class="mode-pills">
+          <button class="mode-pill" data-mode="text-to-video">
+            <div class="mode-icon-wrap">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="3" width="20" height="14" rx="2" />
+                <path d="M10 8l5 3-5 3V8z" />
+                <line x1="6" y1="21" x2="18" y2="21" />
+                <line x1="12" y1="17" x2="12" y2="21" />
+              </svg>
+            </div>
+            <span>Text to Video</span>
+          </button>
+
+          <button class="mode-pill active" data-mode="frames-to-video">
+            <div class="mode-icon-wrap">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="3" width="20" height="14" rx="2" />
+                <rect x="5" y="6" width="5" height="4" rx="1" />
+                <rect x="14" y="6" width="5" height="4" rx="1" />
+                <path d="M12 8L11 9L12 10" />
+                <line x1="6" y1="21" x2="18" y2="21" />
+                <line x1="12" y1="17" x2="12" y2="21" />
+              </svg>
+            </div>
+            <span>Frames to Video</span>
+          </button>
+
+          <button class="mode-pill" data-mode="create-image">
+            <div class="mode-icon-wrap">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <circle cx="8.5" cy="8.5" r="1.5" />
+                <path d="M21 15l-5-5L5 21" />
+              </svg>
+            </div>
+            <span>Create Image</span>
+          </button>
+
+          <button class="mode-pill" data-mode="ingredients-to-video" disabled>
+            <div class="mode-icon-wrap">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="3" width="20" height="14" rx="2" />
+                <path d="M8 7v6" />
+                <path d="M12 7v6" />
+                <path d="M16 7v6" />
+                <line x1="6" y1="21" x2="18" y2="21" />
+                <line x1="12" y1="17" x2="12" y2="21" />
+              </svg>
+            </div>
+            <span>Ingredients</span>
+            <span class="pill-badge">Soon</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- More Settings (collapsible) -->
+      <div class="more-settings">
+        <button class="more-settings-toggle" id="btn-more-settings">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3" />
+            <path
+              d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+          </svg>
+          <span>More Settings</span>
+          <svg class="more-settings-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </button>
+        <div class="more-settings-body hidden" id="more-settings-body">
+          <!-- Image Model (shown for Create Image) -->
+          <div class="setup-field" id="field-image-model">
+            <label for="home-image-model">Image Model</label>
+            <select id="home-image-model">
+              <!-- Populated dynamically from AB_CONSTANTS.IMAGE_MODELS -->
+            </select>
+          </div>
+          <!-- Video Model (shown for T2V & F2V) -->
+          <div class="setup-field" id="field-video-model">
+            <label for="home-video-model">Video Model</label>
+            <select id="home-video-model">
+              <!-- Populated dynamically from AB_CONSTANTS.VIDEO_MODELS -->
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Continue Button -->
+      <button class="home-continue-btn" id="btn-home-continue">
+        <span>Continue</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12" />
+          <polyline points="12 5 19 12 12 19" />
+        </svg>
+      </button>
+
+      <!-- Manage Section -->
+      <div class="home-manage">
+        <button class="home-manage-link" id="link-saved-projects">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+          </svg>
+          <span class="manage-label">Saved Projects</span>
+          <svg class="manage-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </button>
+        <button class="home-manage-link" id="link-history">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="12 6 12 12 16 14" />
+          </svg>
+          <span class="manage-label">History</span>
+          <svg class="manage-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </button>
+        <button class="home-manage-link" id="link-batch" data-premium-feature="batch_queue">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="3" width="20" height="5" rx="1" />
+            <rect x="2" y="10" width="20" height="5" rx="1" />
+            <rect x="2" y="17" width="20" height="5" rx="1" />
+          </svg>
+          <span class="manage-label">Batch Queue</span>
+          <svg class="manage-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- F2V now uses standalone-view like CI/T2V (tab-nav removed) -->
+
+    <!-- Recovery Banner (shown when interrupted jobs are detected) -->
+    <div id="recovery-banner" class="recovery-banner hidden">
+      <div class="recovery-icon">⚠️</div>
+      <div class="recovery-body">
+        <strong>Interrupted job detected</strong>
+        <span id="recovery-details"></span>
+      </div>
+      <div class="recovery-actions">
+        <button id="btn-recovery-resume" class="btn btn-primary btn-sm">▶ Resume</button>
+        <button id="btn-recovery-dismiss" class="btn btn-outline btn-sm">✕</button>
+      </div>
+    </div>
+
+    <!-- Standalone View: Text to Video -->
+    <section id="view-t2v" class="standalone-view hidden">
+      <div class="standalone-header">
+        <button class="standalone-back" id="btn-t2v-back">← Back</button>
+        <div class="standalone-title">
+          <h3>Text to Video</h3>
+          <span class="standalone-subtitle">Generate videos from text prompts</span>
+        </div>
+      </div>
+
+      <div class="t2v-body">
+        <!-- Prompt Section -->
+        <div class="t2v-prompt-section">
+          <div class="t2v-prompt-header">
+            <label class="t2v-label">Prompts</label>
+            <div class="prompt-mode-toggle">
+              <button class="prompt-mode-btn active" id="t2v-mode-single">Single</button>
+              <button class="prompt-mode-btn" id="t2v-mode-multi">Batch</button>
+            </div>
+          </div>
+
+          <!-- Single Prompt -->
+          <div id="t2v-single-wrap">
+            <textarea id="t2v-prompt" class="t2v-textarea" rows="5"
+              placeholder="Describe the video you want to create...&#10;&#10;e.g. A cinematic drone shot flying over snow-capped mountains at golden hour, with clouds drifting slowly below"></textarea>
+          </div>
+
+          <!-- Multi Prompt (one per line) -->
+          <div id="t2v-multi-wrap" class="hidden">
+            <textarea id="t2v-prompts-multi" class="t2v-textarea" rows="8"
+              placeholder="One prompt per line:&#10;&#10;A cinematic sunrise over mountains...&#10;A slow-motion ocean wave crashing on shore...&#10;A timelapse of city traffic at night with light trails..."></textarea>
+            <div class="t2v-prompt-count" id="t2v-prompt-count">
+              <span class="count-dot"></span>
+              <span>0 prompts</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Footer -->
+        <div class="action-bar">
+          <button class="btn btn-outline t2v-batch-btn" id="btn-t2v-batch" data-premium-feature="batch_queue">📦 Save to
+            Batch</button>
+          <button class="btn btn-accent" id="btn-t2v-create">🚀 Create Videos</button>
+        </div>
+      </div>
+
+      <!-- T2V Progress (hidden until project starts) -->
+      <div id="t2v-progress" class="t2v-progress hidden">
+        <div class="t2v-progress-card">
+          <div class="t2v-progress-header">
+            <span class="t2v-progress-name" id="t2v-progress-name">—</span>
+            <span class="badge badge-success" id="t2v-progress-badge">T2V</span>
+          </div>
+
+          <div class="t2v-progress-bar-wrap">
+            <div class="t2v-progress-bar">
+              <div class="t2v-progress-fill" id="t2v-progress-fill"></div>
+            </div>
+            <span class="t2v-progress-pct" id="t2v-progress-pct">0%</span>
+          </div>
+
+          <div class="t2v-progress-details">
+            <div class="t2v-detail-row">
+              <span class="t2v-detail-label">Phase:</span>
+              <span class="t2v-detail-value" id="t2v-detail-phase">—</span>
+            </div>
+            <div class="t2v-detail-row">
+              <span class="t2v-detail-label">Step:</span>
+              <span class="t2v-detail-value" id="t2v-detail-step">—</span>
+            </div>
+            <div class="t2v-detail-row">
+              <span class="t2v-detail-label">State:</span>
+              <span class="t2v-detail-value" id="t2v-detail-state">—</span>
+            </div>
+          </div>
+
+          <!-- Prompt dots -->
+          <div class="t2v-prompt-dots" id="t2v-prompt-dots"></div>
+        </div>
+
+        <!-- T2V Action Buttons -->
+        <div class="t2v-progress-actions">
+          <button class="btn btn-primary btn-sm hidden" id="btn-t2v-download">📥 Download Videos</button>
+          <button class="btn btn-outline btn-sm hidden" id="btn-t2v-back-home">🏠 New Project</button>
+          <button class="btn btn-outline btn-sm" id="btn-t2v-pause">⏸ Pause</button>
+          <button class="btn btn-outline btn-sm hidden" id="btn-t2v-resume">▶ Resume</button>
+          <button class="btn btn-danger btn-sm" id="btn-t2v-stop">⏹ Stop</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Standalone View: Create Image -->
+    <section id="view-create-image" class="standalone-view hidden">
+      <div class="standalone-header">
+        <button class="standalone-back" id="btn-ci-back">← Back</button>
+        <div class="standalone-title">
+          <h3>Create Image</h3>
+          <span class="standalone-subtitle">Generate images from text prompts</span>
+        </div>
+      </div>
+
+      <div class="t2v-body">
+        <!-- Chain Mode -->
+        <div class="section-card ci-chain-section" data-premium-feature="chain_mode">
+          <label class="ci-chain-toggle">
+            <input type="checkbox" id="ci-chain-mode" />
+            <span class="ci-chain-label">🔗 Chain Mode <span class="ci-chain-state"
+                id="ci-chain-state">OFF</span></span>
+          </label>
+          <span class="ci-chain-hint">Each image references the previous one</span>
+          <div id="ci-chain-ref-wrap" class="ci-chain-ref">
+            <label class="t2v-label" for="ci-chain-first-ref">First Image Reference URL
+              <span style="opacity:.5;font-weight:400;">(optional)</span>
+            </label>
+            <input type="url" id="ci-chain-first-ref" class="t2v-input"
+              placeholder="https://example.com/starting-image.jpg" />
+          </div>
+        </div>
+
+        <!-- AI Paste All (identical to F2V) -->
+        <div class="section-card ai-section" data-premium-feature="ai_parser">
+          <div class="ai-header">
+            <h3>✨ AI Prompt Parser <span class="premium-lock">🔒 PRO</span></h3>
+            <button id="btn-ci-paste-all" class="btn btn-accent btn-sm">Paste All</button>
+          </div>
+          <p class="help-text">Paste your full prompt document and AI will parse it into image prompts.
+            Configure AI provider in <strong>Settings ⚙️</strong>.</p>
+
+          <!-- Inline paste area (hidden by default) -->
+          <div id="ci-paste-area" class="paste-area hidden">
+            <label>Paste your full prompt document below:</label>
+            <textarea id="ci-paste-textarea" rows="10" placeholder="Paste your full prompt document here...
+IMAGE 1 — ...
+Generation Prompt: ...
+IMAGE 2 — ...
+..."></textarea>
+            <div id="ci-parse-status" class="parse-status hidden"></div>
+            <div class="paste-area-actions">
+              <button id="btn-ci-parse-ai" class="btn btn-accent btn-sm">🤖 Parse with AI</button>
+              <button id="btn-ci-cancel-paste" class="btn btn-outline btn-sm">Cancel</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Image Prompts (individual fields, like F2V) -->
+        <div class="section-card">
+          <h3>Image Prompts <span class="count" id="ci-image-prompt-count">0</span></h3>
+          <div id="ci-image-prompts-list" class="prompts-list"></div>
+          <button id="btn-ci-add-image-prompt" class="btn btn-outline btn-sm">
+            + Add Image Prompt
+          </button>
+        </div>
+
+        <!-- Batch Prompts (collapsible) -->
+        <div class="section-card ci-batch-section" data-premium-feature="batch_queue">
+          <div class="section-header">
+            <h3>📋 Batch Prompts <span class="premium-lock">🔒 PRO</span></h3>
+            <button id="btn-ci-batch-toggle" class="btn btn-outline btn-sm">Show</button>
+          </div>
+          <div id="ci-batch-area" class="hidden">
+            <p class="help-text">Paste multiple prompts separated by blank lines (one prompt per paragraph).</p>
+            <textarea id="ci-batch-textarea" class="t2v-textarea" rows="8" placeholder="First prompt text here...
+(can span multiple lines)
+
+Second prompt text here...
+(separated by a blank line)
+
+Third prompt..."></textarea>
+            <div class="paste-area-actions">
+              <button id="btn-ci-batch-import" class="btn btn-accent btn-sm">📥 Import Prompts</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Footer -->
+        <div class="action-bar">
+          <button class="btn btn-outline t2v-batch-btn" id="btn-ci-batch" data-premium-feature="batch_queue">📦 Save to
+            Batch</button>
+          <button class="btn btn-accent" id="btn-ci-create">🎨 Create Images</button>
+        </div>
+      </div>
+
+      <!-- CI Progress (hidden until project starts) -->
+      <div id="ci-progress" class="t2v-progress hidden">
+        <div class="t2v-progress-card">
+          <div class="t2v-progress-header">
+            <span class="t2v-progress-name" id="ci-progress-name">—</span>
+            <span class="badge badge-info" id="ci-progress-badge">IMG</span>
+          </div>
+
+          <div class="t2v-progress-bar-wrap">
+            <div class="t2v-progress-bar">
+              <div class="t2v-progress-fill" id="ci-progress-fill"></div>
+            </div>
+            <span class="t2v-progress-pct" id="ci-progress-pct">0%</span>
+          </div>
+
+          <div class="t2v-progress-details">
+            <div class="t2v-detail-row">
+              <span class="t2v-detail-label">Phase:</span>
+              <span class="t2v-detail-value" id="ci-detail-phase">—</span>
+            </div>
+            <div class="t2v-detail-row">
+              <span class="t2v-detail-label">Step:</span>
+              <span class="t2v-detail-value" id="ci-detail-step">—</span>
+            </div>
+            <div class="t2v-detail-row">
+              <span class="t2v-detail-label">State:</span>
+              <span class="t2v-detail-value" id="ci-detail-state">—</span>
+            </div>
+          </div>
+
+          <!-- Image dots -->
+          <div class="t2v-prompt-dots" id="ci-prompt-dots"></div>
+        </div>
+
+        <!-- CI Action Buttons -->
+        <div class="t2v-progress-actions">
+          <button class="btn btn-outline btn-sm" id="btn-ci-pause">⏸ Pause</button>
+          <button class="btn btn-outline btn-sm hidden" id="btn-ci-resume">▶ Resume</button>
+          <button class="btn btn-danger btn-sm" id="btn-ci-stop">⏹ Stop</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Standalone View: Frames to Video -->
+    <section id="view-f2v" class="standalone-view hidden">
+      <div class="standalone-header">
+        <button class="standalone-back" id="btn-f2v-back">← Back</button>
+        <div class="standalone-title">
+          <h3>Frames to Video</h3>
+          <span class="standalone-subtitle">Generate videos from frame prompts</span>
+        </div>
+      </div>
+
+      <div class="f2v-body" id="f2v-project-form">
+
+        <!-- Chain Mode Toggle (default: Single Image Mode — each prompt = 1 image + 1 video) -->
+        <div class="section-card ci-chain-section" data-premium-feature="chain_mode">
+          <label class="ci-chain-toggle">
+            <input type="checkbox" id="f2v-chain-mode" />
+            <span class="ci-chain-label">🔗 Chain Mode <span class="ci-chain-state"
+                id="f2v-chain-state">OFF</span></span>
+          </label>
+          <div class="ci-chain-hints">
+            <span class="ci-chain-hint">Link images as pairs: Image 1→2, Image 2→3, etc.</span>
+            <span class="ci-chain-hint">Default: each image has its own animation prompt</span>
+          </div>
+        </div>
+
+        <!-- AI Paste All -->
+        <div class="section-card ai-section" data-premium-feature="ai_parser">
+          <div class="ai-header">
+            <h3>✨ AI Prompt Parser <span class="premium-lock">🔒 PRO</span></h3>
+            <button id="btn-paste-all" class="btn btn-accent btn-sm">Paste All</button>
+          </div>
+          <p class="help-text">Paste your full prompt document and AI will parse it into image &amp; animation prompts.
+            Configure AI provider in <strong>Settings ⚙️</strong>.</p>
+
+          <!-- Inline paste area (hidden by default) -->
+          <div id="paste-area" class="paste-area hidden">
+            <label>Paste your full prompt document below:</label>
+            <textarea id="paste-all-textarea" rows="10" placeholder="Paste your full prompt document here...
+IMAGE 1 — ...
+Generation Prompt: ...
+VIDEO 1 — ...
+..."></textarea>
+            <div id="parse-status" class="parse-status hidden"></div>
+            <div class="paste-area-actions">
+              <button id="btn-parse-ai" class="btn btn-accent btn-sm">🤖 Parse with AI</button>
+              <button id="btn-cancel-paste" class="btn btn-outline btn-sm">Cancel</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <h3>Image Prompts <span class="count" id="image-prompt-count">0</span></h3>
+          <div id="image-prompts-list" class="prompts-list"></div>
+          <button id="btn-add-image-prompt" class="btn btn-outline btn-sm">
+            + Add Image Prompt
+          </button>
+        </div>
+
+        <div class="section-card">
+          <h3>Animation Prompts <span class="count" id="anim-prompt-count">0</span></h3>
+          <p class="help-text">One prompt per transition between consecutive images.</p>
+          <div id="anim-prompts-list" class="prompts-list"></div>
+          <button id="btn-add-anim-prompt" class="btn btn-outline btn-sm">
+            + Add Animation Prompt
+          </button>
+        </div>
+
+        <div class="action-bar">
+          <button id="btn-save-project" class="btn btn-primary">Save Project</button>
+          <span id="cost-estimate" class="cost-estimate hidden" title="Estimated credit cost">💰 ~0 credits</span>
+          <button id="btn-f2v-batch" class="btn btn-outline" data-premium-feature="batch_queue">📦 Save to
+            Batch</button>
+          <button id="btn-run-project" class="btn btn-accent">▶ Run</button>
+        </div>
+      </div>
+
+      <!-- F2V Progress (hidden by default, shown when job runs) -->
+      <div id="f2v-progress-section" class="f2v-body hidden">
+        <div id="no-active-job" class="empty-state">
+          <div class="empty-icon">⏳</div>
+          <p>No active job running.</p>
+        </div>
+
+        <div id="active-job" class="hidden">
+          <div class="section-card">
+            <div class="job-header">
+              <h3 id="job-project-name">Project Name</h3>
+              <span id="job-phase" class="badge badge-info">—</span>
+            </div>
+
+            <div class="progress-bar-container">
+              <div class="progress-bar">
+                <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
+              </div>
+              <span id="progress-text" class="progress-text">0%</span>
+            </div>
+
+            <div class="progress-details">
+              <div class="detail-row">
+                <span>Phase:</span>
+                <span id="detail-phase">—</span>
+              </div>
+              <div class="detail-row">
+                <span>Step:</span>
+                <span id="detail-step">—</span>
+              </div>
+              <div class="detail-row">
+                <span>State:</span>
+                <span id="detail-state">—</span>
+              </div>
+            </div>
+
+            <div id="image-progress" class="step-grid"></div>
+            <div id="video-progress" class="step-grid"></div>
+          </div>
+
+          <div class="action-bar">
+            <button id="btn-download-videos" class="btn btn-primary hidden">📥 Download Videos</button>
+            <button id="btn-pause" class="btn btn-warn">⏸ Pause</button>
+            <button id="btn-resume" class="btn btn-primary hidden">▶ Resume</button>
+            <button id="btn-stop" class="btn btn-danger">⏹ Stop</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Standalone: Saved Projects -->
+    <section id="view-saved-projects" class="standalone-view hidden">
+      <div class="standalone-header">
+        <button class="standalone-back" id="btn-saved-projects-back">← Back</button>
+        <div class="standalone-title">
+          <h2>📁 Saved Projects</h2>
+        </div>
+      </div>
+      <div class="standalone-body">
+        <div class="section-card">
+          <div class="saved-projects-toolbar">
+            <h3>Projects</h3>
+            <div class="saved-projects-search-wrap">
+              <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round">
+                <circle cx="11" cy="11" r="8" />
+                <path d="M21 21l-4.35-4.35" />
+              </svg>
+              <input type="text" id="saved-projects-search" class="saved-projects-search"
+                placeholder="Search projects..." />
+            </div>
+          </div>
+          <div id="saved-projects-count" class="saved-projects-count"></div>
+          <div id="saved-projects-list" class="project-list">
+            <div class="empty-state small">No projects saved yet.</div>
+          </div>
+          <button id="btn-load-more-projects" class="btn btn-outline btn-sm saved-projects-load-more hidden">
+            Load More
+          </button>
+        </div>
+
+
+      </div>
+    </section>
+
+    <!-- Standalone: Batch Queue -->
+    <section id="view-batch" class="standalone-view hidden">
+      <div class="standalone-header">
+        <button class="standalone-back" id="btn-batch-back">← Back</button>
+        <div class="standalone-title">
+          <h2>📦 Batch Queue</h2>
+        </div>
+      </div>
+      <div class="standalone-body">
+        <div class="section-card" data-premium-feature="batch_queue">
+          <p class="help-text">Add projects via "📦 Save to Batch" in any mode, then run them all sequentially with a
+            1-min cooldown between each.</p>
+
+          <!-- Batch Toolbar -->
+          <div class="batch-toolbar">
+            <label class="batch-select-all">
+              <input type="checkbox" id="batch-select-all-cb" title="Select / Deselect All">
+              <span>Select All</span>
+            </label>
+            <div class="batch-toolbar-actions">
+              <button id="btn-batch-delete-selected" class="btn btn-outline btn-sm" title="Remove selected">🗑️
+                Remove</button>
+            </div>
+          </div>
+
+          <!-- Queue List (rendered by JS, supports drag-drop) -->
+          <div id="batch-queue-list" class="project-list batch-queue-list">
+            <div class="empty-state small">Queue is empty. Add projects from any mode view.</div>
+          </div>
+
+          <!-- Status Bar -->
+          <div id="batch-status-bar" class="batch-status-bar hidden">
+            <span id="batch-status-text" class="batch-status-text"></span>
+          </div>
+
+          <!-- Action Bar -->
+          <div class="batch-action-bar">
+            <button id="btn-start-batch-selected" class="btn btn-outline btn-sm" title="Run only checked projects">▶
+              Start Selected</button>
+            <button id="btn-start-batch" class="btn btn-accent btn-sm">▶ Start All</button>
+            <button id="btn-pause-batch" class="btn btn-warn btn-sm hidden">⏸ Pause</button>
+            <button id="btn-resume-batch" class="btn btn-accent btn-sm hidden">▶ Resume</button>
+            <button id="btn-stop-batch" class="btn btn-danger btn-sm hidden">⏹ Stop</button>
+            <button id="btn-clear-batch" class="btn btn-outline btn-sm" title="Clear entire queue">Clear All</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Standalone: Help Center -->
+    <section id="view-help" class="standalone-view hidden">
+      <div class="standalone-header">
+        <button class="standalone-back" id="btn-help-back">← Back</button>
+        <div class="standalone-title">
+          <h2>❓ Help Center</h2>
+        </div>
+      </div>
+      <div class="standalone-body">
+
+        <!-- Overview -->
+        <div class="section-card help-card">
+          <h3>🚀 What is AutoBoom?</h3>
+          <p class="help-text">AutoBoom is a Chrome extension that automates content creation on Google Flow —
+            generating images and videos from your prompts, hands-free. Set up your project, click run, and AutoBoom
+            handles the rest.</p>
+        </div>
+
+        <!-- Modes -->
+        <div class="section-card help-card">
+          <h3>📹 Text to Video (T2V)</h3>
+          <p class="help-text">Generate videos directly from text prompts. Enter one or multiple prompts and AutoBoom
+            will navigate Flow, create a new project, and submit each prompt to generate a video.</p>
+          <div class="help-steps">
+            <span>1. Enter your prompt(s)</span>
+            <span>2. Choose aspect ratio & model</span>
+            <span>3. Click "Create Videos"</span>
+            <span>4. AutoBoom runs it on Flow</span>
+          </div>
+        </div>
+
+        <div class="section-card help-card">
+          <h3>🎞️ Frames to Video (F2V)</h3>
+          <p class="help-text">Create videos from image-to-animation sequences. First, image prompts generate keyframes,
+            then animation prompts create smooth transitions between them.</p>
+          <div class="help-steps">
+            <span>1. Add image prompts (scenes)</span>
+            <span>2. Add animation prompts (transitions)</span>
+            <span>3. Save & Run the project</span>
+            <span>4. Images → then videos generated</span>
+          </div>
+        </div>
+
+        <div class="section-card help-card">
+          <h3>🎨 Create Image (CI)</h3>
+          <p class="help-text">Batch-generate images from prompts on Flow. Supports multiple prompts, chain mode
+            (reference previous outputs), and different image models like Imagen.</p>
+          <div class="help-steps">
+            <span>1. Add image prompt(s)</span>
+            <span>2. Pick model & aspect ratio</span>
+            <span>3. Click "Create Images"</span>
+            <span>4. AutoBoom generates them all</span>
+          </div>
+        </div>
+
+        <div class="section-card help-card">
+          <h3>🧪 Ingredients <span class="premium-lock">Coming Soon</span></h3>
+          <p class="help-text">An upcoming mode for discovering and combining creative ingredients. Stay tuned!</p>
+        </div>
+
+        <!-- Features -->
+        <div class="section-card help-card">
+          <h3>📦 Batch Queue <span class="premium-lock">🔒 PRO</span></h3>
+          <p class="help-text">Queue multiple projects and run them back-to-back with a 1-minute cooldown between each.
+            Use "📦 Save to Batch" in any mode view, then go to the Batch Queue page to start.</p>
+          <div class="help-steps">
+            <span>• Select projects to run</span>
+            <span>• Drag-and-drop to reorder</span>
+            <span>• Start All / Start Selected</span>
+            <span>• Pause, Resume, Stop anytime</span>
+          </div>
+        </div>
+
+        <div class="section-card help-card">
+          <h3>👻 Stealth Mode <span class="premium-lock">🔒 PRO</span></h3>
+          <p class="help-text">Hides the browser tab content with an overlay while automation runs. Useful when you
+            don't want others seeing the process. Toggle via the ghost icon in the header.</p>
+        </div>
+
+        <div class="section-card help-card">
+          <h3>🔔 Notifications</h3>
+          <p class="help-text">Get notified when projects complete or fail via Telegram, Discord webhooks, or custom
+            webhooks. Set up in Settings with your Bot Token / Chat ID / Webhook URL.</p>
+        </div>
+
+        <div class="section-card help-card">
+          <h3>🔧 Diagnostics</h3>
+          <p class="help-text">Tests AutoBoom's CSS selectors against the live Flow page to check compatibility. Run it
+            from Settings → Selector Diagnostics. A high score means everything is working — a low score may indicate
+            Flow has updated its UI.</p>
+        </div>
+
+        <div class="section-card help-card">
+          <h3>⚡ Premium Plan</h3>
+          <p class="help-text">Free users get a limited number of daily runs. Premium ($9.99/mo) unlocks unlimited
+            prompts, batch queue, stealth mode, and AI parser. Upgrade from the card on the home screen.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Standalone: History -->
+    <section id="view-history" class="standalone-view hidden">
+      <div class="standalone-header">
+        <button class="standalone-back" id="btn-history-back">← Back</button>
+        <div class="standalone-title">
+          <h2>📜 History</h2>
+        </div>
+      </div>
+      <div class="standalone-body">
+        <div class="section-card">
+          <div class="ai-header">
+            <h3>Run History</h3>
+            <button id="btn-clear-history" class="btn btn-outline btn-sm">🗑 Clear</button>
+          </div>
+          <div id="history-stats" class="history-stats hidden">
+            <div class="stat-row">
+              <span class="stat-label">Total Runs</span>
+              <span id="stat-total-runs" class="stat-value">0</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Success Rate</span>
+              <span id="stat-success-rate" class="stat-value">—</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Avg Duration</span>
+              <span id="stat-avg-duration" class="stat-value">—</span>
+            </div>
+          </div>
+          <div id="history-list" class="project-list">
+            <div class="empty-state small">No runs yet. Run a project to see history.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Standalone: Settings -->
+    <section id="view-settings" class="standalone-view hidden">
+      <div class="standalone-header">
+        <button class="standalone-back" id="btn-settings-back">← Back</button>
+        <div class="standalone-title">
+          <h2>⚙️ Settings</h2>
+        </div>
+      </div>
+      <div class="standalone-body">
+        <!-- Account Section (moved to top) -->
+        <div class="section-card">
+          <h3>👤 Account</h3>
+          <div class="account-section">
+            <div class="account-row">
+              <span class="account-label">Email</span>
+              <span id="account-email-display" class="account-value">—</span>
+            </div>
+            <div class="account-row">
+              <span class="account-label">Plan</span>
+              <span id="account-plan-display" class="account-value">
+                <span class="plan-badge plan-free">Free</span>
+              </span>
+            </div>
+            <button id="btn-manage-subscription" class="btn btn-outline btn-sm hidden">Manage Subscription</button>
+            <button id="btn-settings-sign-in" class="btn-sign-in">Sign In / Register</button>
+            <button id="btn-sign-out" class="btn-sign-out hidden">Sign Out</button>
+          </div>
+        </div>
+
+        <div class="section-card" data-premium-feature="notifications">
+          <h3><svg width="16" height="16" viewBox="0 0 24 24" fill="var(--accent)" style="flex-shrink:0;">
+              <path
+                d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
+            </svg> Telegram Notifications <span class="premium-lock">🔒 PRO</span>
+          </h3>
+          <p class="help-text">Get notified when projects complete or fail.</p>
+          <div class="form-group">
+            <label for="tg-bot-token">Bot Token</label>
+            <input type="password" id="tg-bot-token" placeholder="123456:ABC-DEF..." />
+          </div>
+          <div class="form-group">
+            <label for="tg-chat-id">Chat ID</label>
+            <input type="text" id="tg-chat-id" placeholder="123456789" />
+          </div>
+          <div class="form-group" style="display:flex; align-items:center; gap:8px;">
+            <input type="checkbox" id="tg-enabled" />
+            <label for="tg-enabled" style="margin:0; cursor:pointer;">Enable notifications</label>
+          </div>
+          <div class="action-bar">
+            <button class="btn btn-outline btn-sm howto-btn-label" data-howto="telegram">? How To</button>
+            <button id="btn-test-telegram" class="btn btn-outline btn-sm">🧪 Test</button>
+            <button id="btn-save-telegram" class="btn btn-primary btn-sm">💾 Save</button>
+          </div>
+          <div id="tg-status" class="help-text" style="margin-top:6px;"></div>
+        </div>
+
+        <!-- Discord Webhook -->
+        <div class="section-card" data-premium-feature="notifications">
+          <h3>🎮 Discord Notifications <span class="premium-lock">🔒 PRO</span></h3>
+          <p class="help-text">Send rich embeds to a Discord channel via webhook.</p>
+          <div class="form-group">
+            <label for="dc-webhook-url">Webhook URL</label>
+            <input type="password" id="dc-webhook-url" placeholder="https://discord.com/api/webhooks/..." />
+          </div>
+          <div class="form-group" style="display:flex; align-items:center; gap:8px;">
+            <input type="checkbox" id="dc-enabled" />
+            <label for="dc-enabled" style="margin:0; cursor:pointer;">Enable notifications</label>
+          </div>
+          <div class="action-bar">
+            <button class="btn btn-outline btn-sm howto-btn-label" data-howto="discord">? How To</button>
+            <button id="btn-test-discord" class="btn btn-outline btn-sm">🧪 Test</button>
+            <button id="btn-save-discord" class="btn btn-primary btn-sm">💾 Save</button>
+          </div>
+          <div id="dc-status" class="help-text" style="margin-top:6px;"></div>
+        </div>
+
+        <!-- Generic HTTP Webhook -->
+        <div class="section-card" data-premium-feature="notifications">
+          <h3>🔗 HTTP Webhook <span class="premium-lock">🔒 PRO</span></h3>
+          <p class="help-text">POST JSON events to any URL (e.g., Zapier, n8n, custom API).</p>
+          <div class="form-group">
+            <label for="wh-url">Webhook URL</label>
+            <input type="text" id="wh-url" placeholder="https://your-api.com/webhooks/autoboom" />
+          </div>
+          <div class="form-group">
+            <label for="wh-headers">Custom Headers <small>(one per line: Key: Value)</small></label>
+            <textarea id="wh-headers" rows="2" placeholder="Authorization: Bearer ..."
+              style="font-family:monospace;font-size:11px;"></textarea>
+          </div>
+          <div class="form-group" style="display:flex; align-items:center; gap:8px;">
+            <input type="checkbox" id="wh-enabled" />
+            <label for="wh-enabled" style="margin:0; cursor:pointer;">Enable notifications</label>
+          </div>
+          <div class="action-bar">
+            <button class="btn btn-outline btn-sm howto-btn-label" data-howto="webhook">? How To</button>
+            <button id="btn-test-webhook" class="btn btn-outline btn-sm">🧪 Test</button>
+            <button id="btn-save-webhook" class="btn btn-primary btn-sm">💾 Save</button>
+          </div>
+          <div id="wh-status" class="help-text" style="margin-top:6px;"></div>
+        </div>
+
+        <!-- How-To Modal -->
+        <div id="howto-modal" class="howto-modal hidden">
+          <div class="howto-card">
+            <div class="howto-header">
+              <h3 id="howto-title"></h3>
+              <button id="howto-close" class="auth-close-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+            <div id="howto-body" class="howto-body"></div>
+          </div>
+        </div>
+
+        <!-- AI Prompt Parser Settings -->
+        <div class="section-card" data-premium-feature="ai_prompt_parser">
+          <h3>✨ AI Prompt Parser <span class="premium-lock">🔒 PRO</span></h3>
+          <p class="help-text">Configure the AI provider used to parse bulk prompts in the Project tab.</p>
+
+          <!-- AI Key Mode Toggle -->
+          <div class="form-group">
+            <label for="ai-key-mode">API Key Mode</label>
+            <select id="ai-key-mode">
+              <option value="autoboom">🚀 Use AutoBoom AI (included with Premium)</option>
+              <option value="own">🔑 Use my own API key</option>
+            </select>
+          </div>
+
+          <div id="ai-proxy-info" class="help-text"
+            style="padding:8px 10px; background:var(--bg-input); border-radius:var(--radius-sm); border:1px solid var(--border); margin-bottom:12px;">
+            ✅ AutoBoom AI handles everything — no API key needed.<br>
+            <span style="opacity:0.7;">Free tier: limited calls/day. Need more? <strong>Upgrade to Premium</strong> for
+              higher limits, or contact support to increase your quota.</span>
+          </div>
+
+          <div id="ai-own-key-section" class="hidden">
+            <div class="form-group">
+              <label for="ai-provider">AI Provider</label>
+              <select id="ai-provider">
+                <option value="deepseek">DeepSeek</option>
+                <option value="openai">OpenAI (ChatGPT)</option>
+                <option value="gemini">Google Gemini</option>
+                <option value="claude">Claude (Anthropic)</option>
+                <option value="openrouter">OpenRouter</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label id="api-key-label" for="ai-api-key">API Key</label>
+              <div class="api-key-row">
+                <input type="password" id="ai-api-key" placeholder="sk-..." />
+                <button id="btn-save-api-key" class="btn btn-outline btn-sm">💾</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Diagnostics (moved from standalone) -->
+        <div class="section-card">
+          <h3>🔧 Selector Diagnostics</h3>
+          <p class="help-text">Tests all CSS selectors against the live Flow DOM.</p>
+          <button id="btn-run-diag" class="btn btn-primary btn-sm">🔍 Run Check</button>
+          <div id="diag-score" class="diag-score hidden">
+            <div class="score-circle">
+              <span id="diag-score-value">—</span>
+            </div>
+            <div class="score-label">
+              <span id="diag-score-label">Not checked</span>
+              <span id="diag-critical-label"></span>
+            </div>
+          </div>
+          <div id="diag-results" class="diag-results"></div>
+        </div>
+
+        <!-- About / Version -->
+        <div class="section-card">
+          <h3>📋 About AutoBoom</h3>
+          <div id="version-info" class="version-info"></div>
+          <div id="changelog-list" class="changelog-list"></div>
+        </div>
+
+      </div>
+    </section>
+  </div>
+
+  <!-- ═══ Premium Nudge Modal ═══ -->
+  <div id="premium-nudge-modal" class="premium-nudge-modal hidden">
+    <div class="premium-nudge-card">
+      <div class="nudge-icon">⭐</div>
+      <h3><span id="nudge-feature-name"></span> is Premium</h3>
+      <p>Upgrade to unlock this feature and get unlimited access.</p>
+      <button id="nudge-upgrade-btn" class="btn-nudge-upgrade">Upgrade for $9.99/mo →</button>
+      <button class="nudge-close">Maybe later</button>
+    </div>
+  </div>
+
+  <script src="../lib/supabase.min.js"></script>
+  <script src="../shared/constants.js"></script>
+  <script src="../shared/events.js"></script>
+  <script src="../shared/logger.js"></script>
+  <script src="../shared/models.js"></script>
+  <script src="../shared/changelog.js"></script>
+  <script src="../shared/supabase.js"></script>
+  <script src="../shared/auth.js"></script>
+  <script src="../shared/license.js"></script>
+  <script src="../lib/jszip.min.js"></script>
+  <script src="modules/popup-helpers.js"></script>
+  <script src="modules/popup-auth.js"></script>
+  <script src="modules/popup-premium.js"></script>
+  <script src="modules/popup-navigation.js"></script>
+  <script src="modules/popup-settings.js"></script>
+  <script src="modules/popup-ai-parser.js"></script>
+  <script src="modules/popup-f2v-form.js"></script>
+  <script src="modules/popup-t2v-form.js"></script>
+  <script src="modules/popup-ci-form.js"></script>
+  <script src="modules/popup-projects.js"></script>
+  <script src="popup.js"></script>
+</body>
+
+</html>

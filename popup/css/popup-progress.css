@@ -1,0 +1,334 @@
+/* ═══════════════════════════════════════════════════════
+   AutoBoom — Progress & Diagnostics Styles
+   Progress bars, step dots, diagnostics, T2V progress
+   ═══════════════════════════════════════════════════════ */
+
+/* ─── Progress ─── */
+.job-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.progress-bar-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 6px;
+    background: var(--bg-input);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 3px;
+    transition: width 0.4s ease;
+    position: relative;
+}
+
+.progress-fill::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.3),
+            transparent);
+    animation: progressShimmer 1.5s infinite;
+}
+
+@keyframes progressShimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.progress-text {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent);
+    min-width: 32px;
+    text-align: right;
+}
+
+.progress-details {
+    margin-bottom: 12px;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    padding: 4px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.detail-row span:first-child {
+    color: var(--text-muted);
+}
+
+.detail-row span:last-child {
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.step-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 8px;
+}
+
+.step-dot {
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: 700;
+    border: 1px solid var(--border);
+    transition: all var(--transition);
+}
+
+.step-dot.pending {
+    background: var(--bg-input);
+    color: var(--text-muted);
+}
+
+.step-dot.generating {
+    background: var(--accent-light);
+    color: var(--accent);
+    border-color: var(--accent);
+    animation: dotPulse 1.5s infinite;
+}
+
+@keyframes dotPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.08);
+    }
+}
+
+.step-dot.ready,
+.step-dot.submitted,
+.step-dot.downloaded {
+    background: var(--success-light);
+    color: var(--success);
+    border-color: var(--success);
+}
+
+.step-dot.error {
+    background: var(--danger-light);
+    color: var(--danger);
+    border-color: var(--danger);
+}
+
+/* ─── Diagnostics ─── */
+.diag-score {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 12px 0;
+    padding: 12px;
+    background: var(--bg-input);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+}
+
+.score-circle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 3px solid var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--accent);
+}
+
+.score-circle.healthy {
+    border-color: var(--success);
+    color: var(--success);
+}
+
+.score-circle.warning {
+    border-color: var(--warning);
+    color: var(--warning);
+}
+
+.score-circle.error {
+    border-color: var(--danger);
+    color: var(--danger);
+}
+
+.score-label {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+#diag-score-label {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+#diag-critical-label {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.diag-results {
+    margin-top: 10px;
+}
+
+.diag-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    font-size: 11px;
+    border-bottom: 1px solid var(--border);
+}
+
+.diag-item .diag-icon {
+    font-size: 10px;
+}
+
+.diag-item .diag-name {
+    flex: 1;
+    font-weight: 500;
+}
+
+.diag-item .diag-tag {
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--bg-card);
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.diag-item .diag-tag.critical {
+    background: var(--danger-light);
+    color: var(--danger);
+}
+
+/* ─── T2V Progress Section ─── */
+.t2v-progress {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.t2v-progress.hidden {
+    display: none;
+}
+
+.t2v-progress-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    box-shadow: var(--shadow-sm);
+}
+
+.t2v-progress-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.t2v-progress-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.t2v-progress-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.t2v-progress-bar {
+    flex: 1;
+    height: 6px;
+    background: var(--bg-input);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.t2v-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--accent);
+    border-radius: 3px;
+    transition: width 0.4s ease;
+}
+
+.t2v-progress-pct {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+    min-width: 36px;
+    text-align: right;
+}
+
+.t2v-progress-details {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.t2v-detail-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+}
+
+.t2v-detail-label {
+    color: var(--text-secondary);
+}
+
+.t2v-detail-value {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.t2v-prompt-dots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+}
+
+.t2v-progress-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
