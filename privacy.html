@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoBoom — Privacy Policy</title>
+    <meta name="description"
+        content="AutoBoom Privacy Policy. Learn what data we collect, how we store it, and your rights.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0a0e1a;
+            color: #c9d1d9;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* ─── Ambient Background ─── */
+        .bg-glow {
+            position: fixed;
+            top: -30%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 600px;
+            background: radial-gradient(ellipse, rgba(255, 107, 0, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ─── Navigation ─── */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(10, 14, 26, 0.9);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            z-index: 100;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: 800;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .nav-brand span {
+            font-size: 24px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #8b949e;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: #fff;
+        }
+
+        .nav-links a.active {
+            color: #ff9838;
+        }
+
+        /* ─── Hero ─── */
+        .hero {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 140px 24px 40px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            background: rgba(255, 107, 0, 0.12);
+            border: 1px solid rgba(255, 107, 0, 0.25);
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #ff9838;
+            margin-bottom: 24px;
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            font-weight: 900;
+            color: #fff;
+            line-height: 1.1;
+            margin-bottom: 12px;
+            letter-spacing: -1px;
+        }
+
+        .hero p {
+            font-size: 16px;
+            color: #8b949e;
+            max-width: 520px;
+            margin: 0 auto;
+        }
+
+        /* ─── Content Container ─── */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 20px 24px 80px;
+        }
+
+        /* ─── Summary Card ─── */
+        .summary-card {
+            background: linear-gradient(135deg, rgba(63, 185, 80, 0.08), rgba(22, 27, 34, 0.8));
+            border: 1px solid rgba(63, 185, 80, 0.2);
+            border-radius: 14px;
+            padding: 24px 28px;
+            margin-bottom: 40px;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        .summary-card strong {
+            color: #3fb950;
+        }
+
+        /* ─── Section Cards ─── */
+        .policy-section {
+            background: rgba(22, 27, 34, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            padding: 28px 32px;
+            margin-bottom: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .policy-section:hover {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .policy-section h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .policy-section h2 .section-icon {
+            font-size: 20px;
+        }
+
+        .policy-section p {
+            font-size: 15px;
+            color: #c9d1d9;
+            margin-bottom: 10px;
+        }
+
+        .policy-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .policy-section ul li {
+            font-size: 15px;
+            color: #c9d1d9;
+            padding: 6px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .policy-section ul li .bullet {
+            color: #ff9838;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .policy-section ul li .bullet.red {
+            color: #f85149;
+        }
+
+        .policy-section ul li .bullet.green {
+            color: #3fb950;
+        }
+
+        .policy-section ul li strong {
+            color: #e6edf3;
+        }
+
+        .policy-section a {
+            color: #58a6ff;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .policy-section a:hover {
+            text-decoration: underline;
+        }
+
+        .policy-section code {
+            background: rgba(255, 255, 255, 0.06);
+            padding: 2px 7px;
+            border-radius: 5px;
+            font-size: 13px;
+            color: #ff9838;
+            font-family: 'SF Mono', Consolas, monospace;
+        }
+
+        /* ─── Contact Card ─── */
+        .contact-card {
+            background: linear-gradient(135deg, rgba(255, 107, 0, 0.06), rgba(22, 27, 34, 0.8));
+            border: 1px solid rgba(255, 107, 0, 0.2);
+            border-radius: 14px;
+            padding: 28px 32px;
+            margin-top: 16px;
+            text-align: center;
+        }
+
+        .contact-card h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+            justify-content: center;
+        }
+
+        .contact-card p {
+            font-size: 15px;
+            color: #8b949e;
+            margin-bottom: 12px;
+        }
+
+        .contact-email {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 24px;
+            background: rgba(255, 107, 0, 0.1);
+            border: 1px solid rgba(255, 107, 0, 0.25);
+            border-radius: 10px;
+            color: #ff9838;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .contact-email:hover {
+            background: rgba(255, 107, 0, 0.15);
+            border-color: rgba(255, 107, 0, 0.4);
+        }
+
+        /* ─── Footer ─── */
+        footer {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 40px 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        footer p {
+            font-size: 13px;
+            color: #484f58;
+        }
+
+        footer a {
+            color: #58a6ff;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* ─── Responsive ─── */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 30px;
+            }
+
+            nav {
+                padding: 12px 16px;
+            }
+
+            .nav-links {
+                gap: 14px;
+            }
+
+            .policy-section {
+                padding: 20px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="bg-glow"></div>
+
+    <nav>
+        <a href="index.html" class="nav-brand"><span>🚀</span> AutoBoom</a>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="tutorial.html">Tutorial</a>
+            <a href="privacy.html" class="active">Privacy</a>
+        </div>
+    </nav>
+
+    <!-- ═══ Hero ═══ -->
+    <section class="hero">
+        <div class="hero-badge">🔒 Your Data, Your Control</div>
+        <h1>Privacy Policy</h1>
+        <p>Last updated: February 27, 2026</p>
+    </section>
+
+    <div class="container">
+
+        <!-- Summary -->
+        <div class="summary-card">
+            <strong>In short:</strong> AutoBoom collects only your email address for authentication.
+            We do not sell, share, or monetize your personal data. All generation data stays
+            within Google Flow — we never access or store your images or videos.
+        </div>
+
+        <!-- 1. What We Collect -->
+        <div class="policy-section">
+            <h2><span class="section-icon">📋</span> 1. What We Collect</h2>
+            <p>We collect the minimum data necessary to provide the service:</p>
+            <ul>
+                <li><span class="bullet">→</span><span><strong>Email address</strong> — Used solely for account
+                        authentication via Supabase Auth (magic link / OTP login).</span></li>
+                <li><span class="bullet">→</span><span><strong>Daily usage count</strong> — A numeric counter of prompts
+                        submitted per day, used to enforce free-tier limits (10 prompts/day). No prompt content is
+                        stored.</span></li>
+                <li><span class="bullet">→</span><span><strong>Subscription status</strong> — Whether your account is on
+                        the Free or Premium plan, managed via Stripe.</span></li>
+            </ul>
+        </div>
+
+        <!-- 2. What We Do NOT Collect -->
+        <div class="policy-section">
+            <h2><span class="section-icon">🚫</span> 2. What We Do NOT Collect</h2>
+            <ul>
+                <li><span class="bullet red">✕</span><span>We do <strong>not</strong> collect, store, or transmit your
+                        prompts, images, or videos.</span></li>
+                <li><span class="bullet red">✕</span><span>We do <strong>not</strong> track browsing history or activity
+                        outside of Google Flow.</span></li>
+                <li><span class="bullet red">✕</span><span>We do <strong>not</strong> use cookies, analytics, or
+                        third-party tracking.</span></li>
+                <li><span class="bullet red">✕</span><span>We do <strong>not</strong> sell or share your data with third
+                        parties.</span></li>
+            </ul>
+        </div>
+
+        <!-- 3. How Data Is Stored -->
+        <div class="policy-section">
+            <h2><span class="section-icon">🗄️</span> 3. How Data Is Stored</h2>
+            <ul>
+                <li><span class="bullet">→</span><span><strong>Authentication & usage data</strong> — Stored securely in
+                        <a href="https://supabase.com" target="_blank">Supabase</a> (hosted on AWS, SOC 2
+                        compliant).</span></li>
+                <li><span class="bullet">→</span><span><strong>Payment data</strong> — Processed by <a
+                            href="https://stripe.com" target="_blank">Stripe</a>. We never see or store your card
+                        details.</span></li>
+                <li><span class="bullet">→</span><span><strong>Local extension data</strong> — Project settings and
+                        session data are stored in <code>chrome.storage.local</code> on your device only.</span></li>
+            </ul>
+        </div>
+
+        <!-- 4. Permissions Explained -->
+        <div class="policy-section">
+            <h2><span class="section-icon">🔑</span> 4. Permissions Explained</h2>
+            <p>AutoBoom requests the following Chrome permissions:</p>
+            <ul>
+                <li><span class="bullet">→</span><span><strong>activeTab, tabs</strong> — To interact with Google Flow
+                        tabs and send automation commands.</span></li>
+                <li><span class="bullet">→</span><span><strong>scripting</strong> — To enter text into Google Flow's
+                        editor (Slate-based rich text input).</span></li>
+                <li><span class="bullet">→</span><span><strong>storage</strong> — To save your project settings and
+                        authentication session locally.</span></li>
+                <li><span class="bullet">→</span><span><strong>downloads</strong> — To download generated images and
+                        videos to your computer.</span></li>
+                <li><span class="bullet">→</span><span><strong>alarms</strong> — To keep the background service worker
+                        alive during long generation tasks.</span></li>
+                <li><span class="bullet">→</span><span><strong>sidePanel</strong> — To display the AutoBoom interface as
+                        a Chrome side panel.</span></li>
+            </ul>
+        </div>
+
+        <!-- 5. Third-Party Services -->
+        <div class="policy-section">
+            <h2><span class="section-icon">🔗</span> 5. Third-Party Services</h2>
+            <p>AutoBoom integrates with the following services:</p>
+            <ul>
+                <li><span class="bullet">→</span><span><strong>Google Flow</strong> (labs.google) — The target platform
+                        for automation. Your content stays within Google's infrastructure.</span></li>
+                <li><span class="bullet">→</span><span><strong>Supabase</strong> — Authentication and usage
+                        tracking.</span></li>
+                <li><span class="bullet">→</span><span><strong>Stripe</strong> — Payment processing for Premium
+                        subscriptions.</span></li>
+                <li><span class="bullet">→</span><span><strong>AI APIs</strong> (optional) — If you enable AI prompt
+                        rewriting, your prompt text may be sent to the AI provider you select (DeepSeek, OpenAI, Google
+                        Gemini, Anthropic, or OpenRouter). This is opt-in only.</span></li>
+                <li><span class="bullet">→</span><span><strong>Telegram / Discord</strong> (optional) — If you configure
+                        notifications, completion alerts are sent to your bot or webhook.</span></li>
+            </ul>
+        </div>
+
+        <!-- 6. Data Retention -->
+        <div class="policy-section">
+            <h2><span class="section-icon">🕐</span> 6. Data Retention</h2>
+            <ul>
+                <li><span class="bullet green">✓</span><span>Account data is retained while your account is
+                        active.</span></li>
+                <li><span class="bullet green">✓</span><span>Daily usage counters reset automatically every 24
+                        hours.</span></li>
+                <li><span class="bullet green">✓</span><span>You can request account deletion by contacting us at the
+                        email below.</span></li>
+            </ul>
+        </div>
+
+        <!-- 7. Your Rights -->
+        <div class="policy-section">
+            <h2><span class="section-icon">⚖️</span> 7. Your Rights</h2>
+            <p>You have the right to:</p>
+            <ul>
+                <li><span class="bullet green">✓</span><span>Request access to your stored data.</span></li>
+                <li><span class="bullet green">✓</span><span>Request deletion of your account and all associated
+                        data.</span></li>
+                <li><span class="bullet green">✓</span><span>Uninstall the extension at any time, which removes all
+                        local data.</span></li>
+            </ul>
+        </div>
+
+        <!-- 8. Changes to This Policy -->
+        <div class="policy-section">
+            <h2><span class="section-icon">📝</span> 8. Changes to This Policy</h2>
+            <p>We may update this policy from time to time. Changes will be posted on this page with an updated date.
+                Continued use of AutoBoom after changes constitutes acceptance.</p>
+        </div>
+
+        <!-- 9. Contact -->
+        <div class="contact-card">
+            <h2><span class="section-icon">💬</span> Contact</h2>
+            <p>For questions or requests regarding your data:</p>
+            <a href="mailto:buildwithcortex@gmail.com" class="contact-email">
+                📧 buildwithcortex@gmail.com
+            </a>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>© 2026 AutoBoom. Built by Cortex. <a href="privacy.html">Privacy Policy</a> · <a
+                href="mailto:buildwithcortex@gmail.com">Contact</a></p>
+    </footer>
+
+</body>
+
+</html>

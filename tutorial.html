@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoBoom — Full Tutorial</title>
+    <meta name="description"
+        content="Step-by-step tutorial for AutoBoom Chrome Extension. Learn how to use Create Image, Text to Video, and Frames to Video modes on Google Flow.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0a0e1a;
+            color: #c9d1d9;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* ─── Ambient Background ─── */
+        .bg-glow {
+            position: fixed;
+            top: -30%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 600px;
+            background: radial-gradient(ellipse, rgba(255, 107, 0, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-glow-2 {
+            position: fixed;
+            bottom: -20%;
+            right: -10%;
+            width: 600px;
+            height: 500px;
+            background: radial-gradient(ellipse, rgba(88, 166, 255, 0.04) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ─── Navigation ─── */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(10, 14, 26, 0.9);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            z-index: 100;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: 800;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .nav-brand span {
+            font-size: 24px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #8b949e;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: #fff;
+        }
+
+        .nav-links a.active {
+            color: #ff9838;
+        }
+
+        /* ─── Hero ─── */
+        .hero {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 140px 24px 60px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            background: rgba(255, 107, 0, 0.12);
+            border: 1px solid rgba(255, 107, 0, 0.25);
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #ff9838;
+            margin-bottom: 24px;
+        }
+
+        .hero h1 {
+            font-size: 46px;
+            font-weight: 900;
+            color: #fff;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+
+        .hero h1 .gradient {
+            background: linear-gradient(135deg, #ff9838, #ff6b00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 17px;
+            color: #8b949e;
+            max-width: 580px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        /* ─── Table of Contents ─── */
+        .toc {
+            position: relative;
+            z-index: 1;
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 0 24px 48px;
+        }
+
+        .toc-card {
+            background: rgba(22, 27, 34, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 28px 32px;
+        }
+
+        .toc-card h2 {
+            font-size: 15px;
+            font-weight: 700;
+            color: #8b949e;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .toc-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px 32px;
+        }
+
+        .toc-list li a {
+            color: #c9d1d9;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 0;
+            transition: color 0.2s;
+        }
+
+        .toc-list li a:hover {
+            color: #ff9838;
+        }
+
+        .toc-list .toc-emoji {
+            font-size: 18px;
+        }
+
+        /* ─── Tutorial Sections ─── */
+        .tutorial-section {
+            position: relative;
+            z-index: 1;
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 48px 24px;
+        }
+
+        .tutorial-section+.tutorial-section {
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .section-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 14px;
+            background: rgba(255, 107, 0, 0.1);
+            border: 1px solid rgba(255, 107, 0, 0.2);
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #ff9838;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+        }
+
+        .section-label.blue {
+            background: rgba(88, 166, 255, 0.1);
+            border-color: rgba(88, 166, 255, 0.2);
+            color: #58a6ff;
+        }
+
+        .section-label.green {
+            background: rgba(63, 185, 80, 0.1);
+            border-color: rgba(63, 185, 80, 0.2);
+            color: #3fb950;
+        }
+
+        .section-label.purple {
+            background: rgba(163, 113, 247, 0.1);
+            border-color: rgba(163, 113, 247, 0.2);
+            color: #a371f7;
+        }
+
+        .tutorial-section h2 {
+            font-size: 32px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .tutorial-section .section-desc {
+            font-size: 16px;
+            color: #8b949e;
+            margin-bottom: 32px;
+            max-width: 600px;
+        }
+
+        /* ─── Step Cards ─── */
+        .steps {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .step {
+            background: rgba(22, 27, 34, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            padding: 24px 28px;
+            transition: border-color 0.3s;
+        }
+
+        .step:hover {
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 12px;
+        }
+
+        .step-number {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #ff8c00, #e65c00);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 800;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .step-number.blue {
+            background: linear-gradient(135deg, #58a6ff, #388bfd);
+        }
+
+        .step-number.green {
+            background: linear-gradient(135deg, #3fb950, #238636);
+        }
+
+        .step-number.purple {
+            background: linear-gradient(135deg, #a371f7, #8957e5);
+        }
+
+        .step-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .step p {
+            font-size: 15px;
+            color: #c9d1d9;
+            line-height: 1.7;
+            margin-left: 46px;
+        }
+
+        .step p+p {
+            margin-top: 8px;
+        }
+
+        /* ─── Tip / Note Boxes ─── */
+        .tip-box {
+            background: rgba(63, 185, 80, 0.06);
+            border: 1px solid rgba(63, 185, 80, 0.2);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-top: 16px;
+            font-size: 14px;
+            color: #c9d1d9;
+        }
+
+        .tip-box strong {
+            color: #3fb950;
+        }
+
+        .warn-box {
+            background: rgba(255, 166, 0, 0.06);
+            border: 1px solid rgba(255, 166, 0, 0.2);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-top: 16px;
+            font-size: 14px;
+            color: #c9d1d9;
+        }
+
+        .warn-box strong {
+            color: #ffa600;
+        }
+
+        .info-box {
+            background: rgba(88, 166, 255, 0.06);
+            border: 1px solid rgba(88, 166, 255, 0.15);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-top: 16px;
+            font-size: 14px;
+            color: #c9d1d9;
+        }
+
+        .info-box strong {
+            color: #58a6ff;
+        }
+
+        .pro-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            background: linear-gradient(135deg, rgba(255, 107, 0, 0.2), rgba(255, 152, 56, 0.1));
+            border: 1px solid rgba(255, 107, 0, 0.3);
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #ff9838;
+            vertical-align: middle;
+            margin-left: 4px;
+        }
+
+        /* ─── Feature List ─── */
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 8px 0;
+            font-size: 15px;
+            color: #c9d1d9;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .feature-list li::before {
+            content: '→';
+            color: #ff9838;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        /* ─── Options Table ─── */
+        .options-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            font-size: 14px;
+        }
+
+        .options-table th {
+            text-align: left;
+            color: #8b949e;
+            font-weight: 600;
+            padding: 10px 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .options-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            color: #c9d1d9;
+        }
+
+        .options-table td:first-child {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        /* ─── Divider ─── */
+        .section-divider {
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #ff8c00, transparent);
+            border-radius: 3px;
+            margin: 48px auto;
+        }
+
+        /* ─── Getting Started Section ─── */
+        .getting-started-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .gs-card {
+            background: rgba(22, 27, 34, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            padding: 24px;
+            text-align: center;
+            transition: border-color 0.3s;
+        }
+
+        .gs-card:hover {
+            border-color: rgba(255, 107, 0, 0.2);
+        }
+
+        .gs-card .gs-emoji {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .gs-card h3 {
+            font-size: 15px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 6px;
+        }
+
+        .gs-card p {
+            font-size: 13px;
+            color: #8b949e;
+            line-height: 1.5;
+        }
+
+        /* ─── FAQ ─── */
+        .faq-item {
+            background: rgba(22, 27, 34, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin-bottom: 12px;
+        }
+
+        .faq-item h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .faq-item p {
+            font-size: 14px;
+            color: #8b949e;
+            line-height: 1.6;
+        }
+
+        /* ─── CTA ─── */
+        .cta-section {
+            text-align: center;
+            padding: 60px 24px 80px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-section h2 {
+            font-size: 32px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+
+        .cta-section p {
+            color: #8b949e;
+            font-size: 16px;
+            margin-bottom: 28px;
+        }
+
+        .cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 32px;
+            background: linear-gradient(135deg, #ff8c00, #e65c00);
+            color: #fff;
+            font-size: 16px;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.25s;
+            box-shadow: 0 4px 20px rgba(255, 107, 0, 0.3);
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255, 107, 0, 0.4);
+        }
+
+        /* ─── Footer ─── */
+        footer {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 40px 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        footer p {
+            font-size: 13px;
+            color: #484f58;
+        }
+
+        footer a {
+            color: #58a6ff;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* ─── Smooth Scroll ─── */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* ─── Responsive ─── */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 30px;
+            }
+
+            .toc-list {
+                grid-template-columns: 1fr;
+            }
+
+            .getting-started-grid {
+                grid-template-columns: 1fr;
+            }
+
+            nav {
+                padding: 12px 16px;
+            }
+
+            .nav-links {
+                gap: 14px;
+            }
+
+            .step p {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="bg-glow"></div>
+    <div class="bg-glow-2"></div>
+
+    <nav>
+        <a href="index.html" class="nav-brand"><span>🚀</span> AutoBoom</a>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="tutorial.html" class="active">Tutorial</a>
+            <a href="privacy.html">Privacy</a>
+        </div>
+    </nav>
+
+    <!-- ═══ Hero ═══ -->
+    <section class="hero">
+        <div class="hero-badge">📖 Full Tutorial Guide</div>
+        <h1>How to Use <span class="gradient">AutoBoom</span></h1>
+        <p>Everything you need to know to get started. No fluff — just step-by-step instructions for every mode.</p>
+    </section>
+
+    <!-- ═══ Table of Contents ═══ -->
+    <div class="toc">
+        <div class="toc-card">
+            <h2>Jump to</h2>
+            <ul class="toc-list">
+                <li><a href="#getting-started"><span class="toc-emoji">🏁</span> Getting Started</a></li>
+                <li><a href="#home-screen"><span class="toc-emoji">🏠</span> Home Screen</a></li>
+                <li><a href="#create-image"><span class="toc-emoji">🎨</span> Create Image</a></li>
+                <li><a href="#text-to-video"><span class="toc-emoji">🎬</span> Text to Video</a></li>
+                <li><a href="#frames-to-video"><span class="toc-emoji">🎞️</span> Frames to Video</a></li>
+                <li><a href="#chain-mode"><span class="toc-emoji">🔗</span> Chain Mode</a></li>
+                <li><a href="#ai-parser"><span class="toc-emoji">✨</span> AI Prompt Parser</a></li>
+                <li><a href="#batch-projects"><span class="toc-emoji">📦</span> Batch Projects</a></li>
+                <li><a href="#stealth-mode"><span class="toc-emoji">👻</span> Stealth Mode</a></li>
+                <li><a href="#faq"><span class="toc-emoji">❓</span> FAQ</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ═══ Getting Started ═══ -->
+    <section class="tutorial-section" id="getting-started">
+        <div class="section-label">🏁 Getting Started</div>
+        <h2>Before You Begin</h2>
+        <p class="section-desc">AutoBoom works on top of Google Flow. It controls the Flow page for you — clicking
+            buttons, typing prompts, uploading images — so you don't have to do it manually.</p>
+
+        <div class="getting-started-grid">
+            <div class="gs-card">
+                <div class="gs-emoji">1️⃣</div>
+                <h3>Install the Extension</h3>
+                <p>Get AutoBoom from the Chrome Web Store. Pin it to your toolbar so it's easy to access.</p>
+            </div>
+            <div class="gs-card">
+                <div class="gs-emoji">2️⃣</div>
+                <h3>Open Google Flow</h3>
+                <p>Go to <strong>labs.google/fx/tools/flow</strong>. AutoBoom only works on this page.</p>
+            </div>
+            <div class="gs-card">
+                <div class="gs-emoji">3️⃣</div>
+                <h3>Open the Side Panel</h3>
+                <p>Click the AutoBoom icon in your toolbar. The extension opens as a side panel next to Flow.</p>
+            </div>
+            <div class="gs-card">
+                <div class="gs-emoji">4️⃣</div>
+                <h3>Check the Status</h3>
+                <p>Look at the green dot at the top. If it says "Connected" — you're good to go.</p>
+            </div>
+        </div>
+
+        <div class="warn-box">
+            <strong>⚠️ Important:</strong> Keep the Google Flow tab open and visible while AutoBoom is running. Don't
+            switch away from it or minimise the browser. AutoBoom needs to interact with the page directly.
+        </div>
+    </section>
+
+    <!-- ═══ Home Screen ═══ -->
+    <section class="tutorial-section" id="home-screen">
+        <div class="section-label">🏠 Home Screen</div>
+        <h2>The Home Screen</h2>
+        <p class="section-desc">This is the first thing you see when you open AutoBoom. Every project starts here.</p>
+
+        <div class="steps">
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Project Name</div>
+                </div>
+                <p>Give your project a name. This is just for you — it helps you find it later in Saved Projects and
+                    History. Something like "Beach Sunset Scenes" or "Product Showcase Batch".</p>
+            </div>
+
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">2</div>
+                    <div class="step-title">Aspect Ratio</div>
+                </div>
+                <p>Choose between <strong>9:16 (Portrait)</strong> or <strong>16:9 (Landscape)</strong>. This applies to
+                    all images and videos in the project. Pick 9:16 for TikTok/Reels, 16:9 for YouTube.</p>
+            </div>
+
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">3</div>
+                    <div class="step-title">Outputs Per Prompt</div>
+                </div>
+                <p>How many images or videos to generate for each prompt. Set to 1 for speed, or up to 4 if you want
+                    variations to pick from.</p>
+            </div>
+
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">4</div>
+                    <div class="step-title">Select Mode</div>
+                </div>
+                <p>Pick one of the three modes: <strong>Text to Video</strong>, <strong>Frames to Video</strong>, or
+                    <strong>Create Image</strong>. Each mode has its own screen — explained in detail below.</p>
+            </div>
+
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">5</div>
+                    <div class="step-title">Click Continue</div>
+                </div>
+                <p>Hit the "Continue" button to go to your selected mode. You can always go back to the home screen
+                    later.</p>
+            </div>
+        </div>
+
+        <div class="tip-box">
+            <strong>💡 Tip — More Settings:</strong> Click "More Settings" to pick a specific model. For images you can
+            choose between Nano Banana Pro, Nano Banana 2 or Imagen 4. For videos you can choose between Veo 2 and Veo
+            3.1 (Fast or Quality).
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- ═══ Create Image ═══ -->
+    <section class="tutorial-section" id="create-image">
+        <div class="section-label blue">Mode 1</div>
+        <h2>🎨 Create Image</h2>
+        <p class="section-desc">Generate images from text prompts. You can do a single image, or batch hundreds of
+            prompts in one go.</p>
+
+        <div class="steps">
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number blue">1</div>
+                    <div class="step-title">Add Your Prompts</div>
+                </div>
+                <p>Click <strong>"+ Add Image Prompt"</strong> to add a prompt field. Type what you want the image to
+                    look like. Be specific — describe the scene, lighting, style, colours.</p>
+                <p>Add as many prompts as you want. Each prompt creates its own image.</p>
+            </div>
+
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number blue">2</div>
+                    <div class="step-title">Or Use Bulk Prompts</div>
+                </div>
+                <p>Got a long list of prompts? Click <strong>"📋 Bulk Prompts"</strong> <span
+                        class="pro-badge">PRO</span> to paste them all at once. Separate each prompt with a blank line.
+                    Hit "Import Prompts" and they'll each become their own prompt field.</p>
+            </div>
+
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number blue">3</div>
+                    <div class="step-title">Click "Create Images"</div>
+                </div>
+                <p>Hit the <strong>"🎨 Create Images"</strong> button. AutoBoom takes over from here. It goes to Google
+                    Flow, types each prompt, clicks Create, waits for the result, then moves to the next one.</p>
+            </div>
+
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number blue">4</div>
+                    <div class="step-title">Watch the Progress</div>
+                </div>
+                <p>You'll see a progress bar and status updates: which prompt is being generated, what phase it's in,
+                    and how many are done. You can <strong>Pause</strong> or <strong>Stop</strong> the run at any time.
+                </p>
+            </div>
+
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number blue">5</div>
+                    <div class="step-title">Done!</div>
+                </div>
+                <p>When all images are generated, you'll see a completion card. Click <strong>"Done — New
+                        Project"</strong> to start fresh, or go to History to review what you made.</p>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <strong>ℹ️ Models:</strong> Under "More Settings" on the home screen, you can pick your image model.
+            <strong>Nano Banana Pro</strong> is the default and fastest. <strong>Imagen 4</strong> gives higher-quality
+            results but uses more credits.
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- ═══ Text to Video ═══ -->
+    <section class="tutorial-section" id="text-to-video">
+        <div class="section-label green">Mode 2</div>
+        <h2>🎬 Text to Video</h2>
+        <p class="section-desc">Generate videos straight from text prompts. Write what you want to see, and AutoBoom
+            creates videos for you on Google Flow.</p>
+
+        <div class="steps">
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number green">1</div>
+                    <div class="step-title">Choose Single or Batch</div>
+                </div>
+                <p>At the top you'll see two tabs: <strong>Single</strong> and <strong>Batch</strong>.</p>
+                <p><strong>Single:</strong> One prompt, one video. Good for testing a prompt or making a quick clip.</p>
+                <p><strong>Batch:</strong> Multiple prompts, each on its own line. AutoBoom generates a video for each
+                    one, back-to-back.</p>
+            </div>
+
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number green">2</div>
+                    <div class="step-title">Write Your Prompt(s)</div>
+                </div>
+                <p>Describe the video you want. Be descriptive — include the subject, motion, camera angle, mood, and
+                    style.</p>
+                <p>Example: <em>"A cinematic drone shot flying over snow-capped mountains at golden hour, with clouds
+                        drifting slowly below."</em></p>
+                <p>For batch mode, put each prompt on its own line.</p>
+            </div>
+
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number green">3</div>
+                    <div class="step-title">Click "Create Videos"</div>
+                </div>
+                <p>Hit the <strong>"🚀 Create Videos"</strong> button. AutoBoom navigates to the Text to Video tool on
+                    Flow, enters your prompt, picks the right model and aspect ratio, and submits it.</p>
+            </div>
+
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number green">4</div>
+                    <div class="step-title">Wait for Generation</div>
+                </div>
+                <p>Videos take longer than images — usually a few minutes each. AutoBoom shows you the progress with a
+                    bar and prompt dots. Each dot represents one prompt.</p>
+                <p>Once all prompts are submitted, AutoBoom waits for Google Flow to finish rendering them.</p>
+            </div>
+
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number green">5</div>
+                    <div class="step-title">Download Your Videos</div>
+                </div>
+                <p>When videos are ready, the <strong>"📥 Download Videos"</strong> button lights up. Click it to
+                    download all your videos as a ZIP file. Or click "Done — New Project" to move on.</p>
+            </div>
+        </div>
+
+        <div class="tip-box">
+            <strong>💡 Tip — Video Models:</strong> Under "More Settings" on the home screen, choose your video model.
+            <strong>Veo 3.1 Fast</strong> is quick and good for most use cases. <strong>Veo 3.1 Quality</strong> takes
+            longer but looks better. <strong>Veo 2</strong> is the older model — still solid.
+        </div>
+
+        <table class="options-table">
+            <thead>
+                <tr>
+                    <th>Model</th>
+                    <th>Speed</th>
+                    <th>Best For</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Veo 3.1 — Fast</td>
+                    <td>Fastest</td>
+                    <td>Quick previews, testing prompts</td>
+                </tr>
+                <tr>
+                    <td>Veo 3.1 — Quality</td>
+                    <td>Slower</td>
+                    <td>Final output, high quality</td>
+                </tr>
+                <tr>
+                    <td>Veo 2 — Fast</td>
+                    <td>Fast</td>
+                    <td>Older style, good for consistency</td>
+                </tr>
+                <tr>
+                    <td>Veo 2 — Quality</td>
+                    <td>Slower</td>
+                    <td>High quality with Veo 2 look</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- ═══ Frames to Video ═══ -->
+    <section class="tutorial-section" id="frames-to-video">
+        <div class="section-label purple">Mode 3</div>
+        <h2>🎞️ Frames to Video</h2>
+        <p class="section-desc">This is the most powerful mode. First, AutoBoom generates images from your prompts. Then
+            it animates those images into videos using animation prompts. Two phases, fully automated.</p>
+
+        <div class="steps">
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number purple">1</div>
+                    <div class="step-title">Add Image Prompts</div>
+                </div>
+                <p>These are your "keyframes" — the images that will become the starting and ending points of each video
+                    clip. Click <strong>"+ Add Image Prompt"</strong> and describe each scene.</p>
+                <p>Example: You want a video that goes from a sunrise to a sunset. You'd add two image prompts — one for
+                    the sunrise, one for the sunset.</p>
+            </div>
+
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number purple">2</div>
+                    <div class="step-title">Add Animation Prompts</div>
+                </div>
+                <p>These describe the <strong>motion</strong> between your images. Each animation prompt creates a video
+                    transition between two consecutive images.</p>
+                <p>If you have 5 images, you normally need 4 animation prompts (one between each pair). Or if Chain Mode
+                    is off, each image gets its own animation prompt.</p>
+                <p>Example: <em>"Slow zoom out as the sun rises over the horizon, light gradually warming the
+                        scene."</em></p>
+            </div>
+
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number purple">3</div>
+                    <div class="step-title">Save and Run</div>
+                </div>
+                <p>Click <strong>"Save Project"</strong> to save it locally, then click <strong>"▶ Run"</strong> to
+                    start. AutoBoom goes through two phases:</p>
+                <p><strong>Phase 1 — Images:</strong> AutoBoom generates all your images on Flow, one by one. It grabs
+                    the URL of each generated image for the next phase.</p>
+                <p><strong>Phase 2 — Videos:</strong> AutoBoom switches to the Frames-to-Video tool on Flow. For each
+                    pair of images, it uploads the start frame and end frame, enters the animation prompt, and submits
+                    the video. Then it waits for all videos to render and downloads them.</p>
+            </div>
+
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number purple">4</div>
+                    <div class="step-title">Watch Progress</div>
+                </div>
+                <p>The progress screen shows you which phase you're in (Images or Videos), which step it's on, and a big
+                    progress bar. You can Pause, Resume, or Stop at any time.</p>
+            </div>
+
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number purple">5</div>
+                    <div class="step-title">Download Everything</div>
+                </div>
+                <p>Once all videos are rendered, the "Download Videos" button activates. Click it to get all your videos
+                    in a ZIP. Your images are already saved on Flow — you can find them there too.</p>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <strong>ℹ️ How many prompts do I need?</strong><br>
+            With <strong>Chain Mode ON:</strong> If you have N images, you need N−1 animation prompts (transitions
+            between consecutive pairs).<br>
+            With <strong>Chain Mode OFF:</strong> Each image gets its own separate animation. You need the same number
+            of animation prompts as image prompts.
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- ═══ Chain Mode ═══ -->
+    <section class="tutorial-section" id="chain-mode">
+        <div class="section-label">🔗 Feature</div>
+        <h2>Chain Mode <span class="pro-badge">PRO</span></h2>
+        <p class="section-desc">Chain Mode links your outputs together. The previous result becomes the reference for
+            the next prompt. This keeps your images visually consistent.</p>
+
+        <div class="steps">
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">→</div>
+                    <div class="step-title">In Create Image</div>
+                </div>
+                <p>Turn on the <strong>🔗 Chain Mode</strong> toggle at the top of the Create Image screen. Now, when
+                    AutoBoom generates Image 1, it takes the URL of that result and feeds it as a reference into Image
+                    2. Image 2's result feeds into Image 3, and so on.</p>
+                <p>This means every image builds on the last one. Great for creating a series of images that look like
+                    they belong together — same character, same style, same world.</p>
+                <p>You can also set a <strong>"First Image Reference URL"</strong> if you already have a starting image
+                    you want to use.</p>
+            </div>
+
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">→</div>
+                    <div class="step-title">In Frames to Video</div>
+                </div>
+                <p>Chain Mode changes how video transitions work. With Chain Mode on, AutoBoom uses <strong>consecutive
+                        pairs</strong>: Image 1 → Image 2, Image 2 → Image 3, and so on. Each pair becomes one video
+                    clip.</p>
+                <p>With Chain Mode off, each image stands alone — it gets its own animation prompt and its own video.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- ═══ AI Prompt Parser ═══ -->
+    <section class="tutorial-section" id="ai-parser">
+        <div class="section-label">✨ Feature</div>
+        <h2>AI Prompt Parser <span class="pro-badge">PRO</span></h2>
+        <p class="section-desc">Got a big prompt document from ChatGPT or another AI? Paste the whole thing and let
+            AutoBoom's AI parse it into separate image and animation prompts automatically.</p>
+
+        <div class="steps">
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Click "Paste All"</div>
+                </div>
+                <p>In Create Image or Frames to Video mode, you'll see an <strong>"✨ AI Prompt Parser"</strong> section.
+                    Click the <strong>"Paste All"</strong> button to open the paste area.</p>
+            </div>
+
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">2</div>
+                    <div class="step-title">Paste Your Document</div>
+                </div>
+                <p>Paste your full prompt document into the text area. This can be a ChatGPT output, a script, a list —
+                    any format. It doesn't need to be perfectly structured.</p>
+                <p>The AI will figure out which parts are image prompts and which parts are animation prompts.</p>
+            </div>
+
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">3</div>
+                    <div class="step-title">Click "Parse with AI"</div>
+                </div>
+                <p>Hit the <strong>"🤖 Parse with AI"</strong> button. AutoBoom sends your text to an AI model, which
+                    reads through it and extracts the individual prompts. You'll see a status spinner while it works.
+                </p>
+            </div>
+
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">4</div>
+                    <div class="step-title">Review and Edit</div>
+                </div>
+                <p>The parsed prompts fill into the fields automatically. Scroll through them and edit any that need
+                    tweaking. Then you're ready to run.</p>
+            </div>
+        </div>
+
+        <div class="tip-box">
+            <strong>💡 Tip — AI Provider:</strong> By default, the parser uses <strong>AutoBoom's built-in AI</strong>
+            (included with Premium). If you want to use your own API key (OpenAI, Gemini, DeepSeek, Claude, OpenRouter),
+            go to <strong>Settings → AI Prompt Parser</strong> and switch the key mode to "Use my own API key".
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- ═══ Batch Projects ═══ -->
+    <section class="tutorial-section" id="batch-projects">
+        <div class="section-label">📦 Feature</div>
+        <h2>Batch Projects <span class="pro-badge">PRO</span></h2>
+        <p class="section-desc">Set up multiple projects and run them all in a row, completely hands-free. AutoBoom
+            finishes one project, takes a short cooldown, then starts the next one.</p>
+
+        <div class="steps">
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Add Projects to the Queue</div>
+                </div>
+                <p>In any mode (Create Image, Text to Video, or Frames to Video), you'll see a <strong>"+ Add to
+                        Batch"</strong> button. Click it to save the current project to the batch queue instead of
+                    running it immediately.</p>
+            </div>
+
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">2</div>
+                    <div class="step-title">Open Batch Projects</div>
+                </div>
+                <p>Go back to the home screen and click <strong>"Batch Projects"</strong>. You'll see all your queued
+                    projects listed. You can drag-and-drop to reorder them, select/deselect with checkboxes, and remove
+                    any you don't want.</p>
+            </div>
+
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">3</div>
+                    <div class="step-title">Configure</div>
+                </div>
+                <p>Set the <strong>cooldown</strong> between projects (default is 30 seconds — this gives Flow a
+                    breather). Set the <strong>error limit</strong> — how many consecutive failures before AutoBoom
+                    stops the whole batch.</p>
+            </div>
+
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">4</div>
+                    <div class="step-title">Start</div>
+                </div>
+                <p>Click <strong>"▶ Start All"</strong> to run every project in order, or <strong>"▶ Start
+                        Selected"</strong> to run only the checked ones. AutoBoom runs them back-to-back until the queue
+                    is done.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- ═══ Stealth Mode ═══ -->
+    <section class="tutorial-section" id="stealth-mode">
+        <div class="section-label">👻 Feature</div>
+        <h2>Stealth Mode <span class="pro-badge">PRO</span></h2>
+        <p class="section-desc">Hides the Google Flow tab behind a clean overlay while AutoBoom works. Useful if
+            someone's looking at your screen or you're in a meeting.</p>
+
+        <div class="steps">
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">→</div>
+                    <div class="step-title">How to Use</div>
+                </div>
+                <p>Click the <strong>👻 ghost icon</strong> in the top-right of the AutoBoom panel. A dark overlay
+                    covers the Flow page. AutoBoom still runs underneath — it just hides the browser from view.</p>
+                <p>The overlay shows a small progress indicator so you still know what's happening. Click the ghost icon
+                    again to turn it off.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- ═══ FAQ ═══ -->
+    <section class="tutorial-section" id="faq">
+        <div class="section-label">❓ Common Questions</div>
+        <h2>FAQ</h2>
+        <p class="section-desc">Quick answers to things people ask about.</p>
+
+        <div class="faq-item">
+            <h3>Do I need a Google Flow account?</h3>
+            <p>Yes. AutoBoom automates Google Flow — you need to be logged into your Google account and have access to
+                Flow. AutoBoom doesn't bypass any access restrictions.</p>
+        </div>
+
+        <div class="faq-item">
+            <h3>How many prompts can I run for free?</h3>
+            <p>Free users get <strong>10 prompts per day</strong>. This resets every 24 hours. Premium users get
+                unlimited prompts.</p>
+        </div>
+
+        <div class="faq-item">
+            <h3>Can I close the browser while it's running?</h3>
+            <p>No. AutoBoom needs the Flow tab to be open and active. If you close it or switch away, the automation
+                pauses. If you need to step away, use Stealth Mode to hide the screen instead.</p>
+        </div>
+
+        <div class="faq-item">
+            <h3>What if a prompt gets blocked or fails?</h3>
+            <p>AutoBoom has a built-in retry system. If a prompt fails (e.g., a content policy violation), it retries up
+                to 3 times with increasing delays. If it still fails, it marks that prompt as an error and moves to the
+                next one.</p>
+        </div>
+
+        <div class="faq-item">
+            <h3>Where do my images and videos go?</h3>
+            <p>Images stay on Google Flow — you can find them in your Flow history. Videos can be downloaded as a ZIP
+                from the completion screen. Everything also shows up in AutoBoom's History page.</p>
+        </div>
+
+        <div class="faq-item">
+            <h3>How do I get notified when a batch finishes?</h3>
+            <p>Go to <strong>Settings</strong> and set up notifications. You can get alerts through Telegram, Discord
+                webhooks, or any custom HTTP webhook (like Zapier or n8n).</p>
+        </div>
+
+        <div class="faq-item">
+            <h3>What does "Diagnostics" do?</h3>
+            <p>Diagnostics tests whether AutoBoom's CSS selectors still match the Google Flow page. Google sometimes
+                updates their UI, which can break automation. Run diagnostics from Settings if things aren't working — a
+                high score means everything's fine.</p>
+        </div>
+    </section>
+
+    <!-- ═══ CTA ═══ -->
+    <section class="cta-section">
+        <h2>Ready to Get Started?</h2>
+        <p>Install AutoBoom and start generating in minutes.</p>
+        <a href="https://chromewebstore.google.com/detail/autoboom-google-flow-auto/agolghmfhnfepclpfapfheijphheckni"
+            class="cta-btn">
+            Install AutoBoom →
+        </a>
+    </section>
+
+    <footer>
+        <p>© 2026 AutoBoom. Built by Cortex. <a href="privacy.html">Privacy Policy</a> · <a
+                href="mailto:buildwithcortex@gmail.com">Contact</a></p>
+    </footer>
+
+</body>
+
+</html>
