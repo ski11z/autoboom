@@ -236,6 +236,55 @@
             font-family: 'SF Mono', Consolas, monospace;
         }
 
+        /* ─── Data Table ─── */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 13px;
+        }
+
+        .data-table th,
+        .data-table td {
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 10px 12px;
+            text-align: left;
+        }
+
+        .data-table th {
+            background: rgba(255, 107, 0, 0.08);
+            color: #ff9838;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table td {
+            color: #c9d1d9;
+        }
+
+        .data-table td strong {
+            color: #e6edf3;
+        }
+
+        .data-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .opt-in-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            background: rgba(63, 185, 80, 0.12);
+            border: 1px solid rgba(63, 185, 80, 0.25);
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            color: #3fb950;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
         /* ─── Contact Card ─── */
         .contact-card {
             background: linear-gradient(135deg, rgba(255, 107, 0, 0.06), rgba(22, 27, 34, 0.8));
@@ -320,6 +369,15 @@
             .policy-section {
                 padding: 20px 20px;
             }
+
+            .data-table {
+                font-size: 12px;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 8px 6px;
+            }
         }
     </style>
 </head>
@@ -341,7 +399,7 @@
     <section class="hero">
         <div class="hero-badge">🔒 Your Data, Your Control</div>
         <h1>Privacy Policy</h1>
-        <p>Last updated: February 27, 2026</p>
+        <p>Last updated: March 5, 2026</p>
     </section>
 
     <div class="container">
@@ -353,19 +411,65 @@
             within Google Flow — we never access or store your images or videos.
         </div>
 
-        <!-- 1. What We Collect -->
+        <!-- 1. Data We Collect -->
         <div class="policy-section">
-            <h2><span class="section-icon">📋</span> 1. What We Collect</h2>
-            <p>We collect the minimum data necessary to provide the service:</p>
-            <ul>
-                <li><span class="bullet">→</span><span><strong>Email address</strong> — Used solely for account
-                        authentication via Supabase Auth (magic link / OTP login).</span></li>
-                <li><span class="bullet">→</span><span><strong>Daily usage count</strong> — A numeric counter of prompts
-                        submitted per day, used to enforce free-tier limits (10 prompts/day). No prompt content is
-                        stored.</span></li>
-                <li><span class="bullet">→</span><span><strong>Subscription status</strong> — Whether your account is on
-                        the Free or Premium plan, managed via Stripe.</span></li>
-            </ul>
+            <h2><span class="section-icon">📋</span> 1. Data We Collect, How It's Used, and Who It's Shared With</h2>
+            <p>We collect the minimum data necessary to provide the service. The table below details every piece of data
+                AutoBoom handles:</p>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Purpose</th>
+                        <th>Stored Where</th>
+                        <th>Shared With</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Email address</strong></td>
+                        <td>Account authentication (OTP / magic link)</td>
+                        <td>Supabase (AWS, SOC 2)</td>
+                        <td>Supabase</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Daily usage count</strong></td>
+                        <td>Enforce free-tier limits (10/day)</td>
+                        <td>Supabase</td>
+                        <td>Not shared</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Subscription status</strong></td>
+                        <td>Determine Free vs Premium plan</td>
+                        <td>Supabase + Stripe</td>
+                        <td>Stripe</td>
+                    </tr>
+                    <tr>
+                        <td><strong>AI prompt text</strong> <span class="opt-in-badge">opt-in</span></td>
+                        <td>AI-powered prompt rewriting</td>
+                        <td>Not stored by AutoBoom</td>
+                        <td>User-selected AI provider</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Telegram bot token</strong> <span class="opt-in-badge">opt-in</span></td>
+                        <td>Completion notifications</td>
+                        <td>chrome.storage.local</td>
+                        <td>Telegram API</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Discord webhook URL</strong> <span class="opt-in-badge">opt-in</span></td>
+                        <td>Completion notifications</td>
+                        <td>chrome.storage.local</td>
+                        <td>Discord API</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Project settings & prompts</strong></td>
+                        <td>Local workflow state</td>
+                        <td>chrome.storage.local</td>
+                        <td>Not transmitted</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
         <!-- 2. What We Do NOT Collect -->
@@ -373,34 +477,78 @@
             <h2><span class="section-icon">🚫</span> 2. What We Do NOT Collect</h2>
             <ul>
                 <li><span class="bullet red">✕</span><span>We do <strong>not</strong> collect, store, or transmit your
-                        prompts, images, or videos.</span></li>
+                        prompts, images, or videos (except when you opt in to AI prompt rewriting).</span></li>
                 <li><span class="bullet red">✕</span><span>We do <strong>not</strong> track browsing history or activity
                         outside of Google Flow.</span></li>
                 <li><span class="bullet red">✕</span><span>We do <strong>not</strong> use cookies, analytics, or
                         third-party tracking.</span></li>
-                <li><span class="bullet red">✕</span><span>We do <strong>not</strong> sell or share your data with third
-                        parties.</span></li>
+                <li><span class="bullet red">✕</span><span>We do <strong>not</strong> sell or monetize your personal
+                        data.</span></li>
             </ul>
         </div>
 
-        <!-- 3. How Data Is Stored -->
+        <!-- 3. How Data Is Shared -->
         <div class="policy-section">
-            <h2><span class="section-icon">🗄️</span> 3. How Data Is Stored</h2>
+            <h2><span class="section-icon">🔗</span> 3. How Data Is Shared With Third Parties</h2>
+            <p>AutoBoom shares user data only with the following services, and only as described below:</p>
             <ul>
-                <li><span class="bullet">→</span><span><strong>Authentication & usage data</strong> — Stored securely in
-                        <a href="https://supabase.com" target="_blank">Supabase</a> (hosted on AWS, SOC 2
+                <li><span class="bullet">→</span><span><strong>Supabase</strong> (authentication provider) — Receives
+                        your email address, daily usage counter, and subscription status for account management. Hosted
+                        on AWS with SOC 2 compliance. <a href="https://supabase.com/privacy" target="_blank">Supabase
+                            Privacy Policy</a>.</span></li>
+                <li><span class="bullet">→</span><span><strong>Stripe</strong> (payment processor) — Receives your
+                        email for payment processing when you subscribe to Premium. AutoBoom never sees or stores your
+                        credit card details. <a href="https://stripe.com/privacy" target="_blank">Stripe Privacy
+                            Policy</a>.</span></li>
+                <li><span class="bullet">→</span><span><strong>Google Flow</strong> (labs.google) — AutoBoom automates
+                        the Google Flow user interface. Your prompts, images, and videos remain within Google's
+                        infrastructure. AutoBoom does not extract or transmit this content.</span></li>
+                <li><span class="bullet">→</span><span><strong>AI Providers</strong> (opt-in only) — If you enable AI
+                        prompt rewriting in Settings, the text of your prompt is sent to your selected provider
+                        (DeepSeek, OpenAI, Google Gemini, Anthropic, or OpenRouter) for processing. No other data is
+                        sent. This feature is disabled by default.</span></li>
+                <li><span class="bullet">→</span><span><strong>Telegram</strong> (opt-in only) — If you configure
+                        Telegram notifications in Settings, completion alerts are sent via the Telegram Bot API. No
+                        other data is sent.</span></li>
+                <li><span class="bullet">→</span><span><strong>Discord</strong> (opt-in only) — If you configure
+                        Discord notifications in Settings, completion alerts are sent via your webhook URL. No other
+                        data is sent.</span></li>
+            </ul>
+        </div>
+
+        <!-- 4. Data Transmission and Security -->
+        <div class="policy-section">
+            <h2><span class="section-icon">🔐</span> 4. Data Transmission and Security</h2>
+            <ul>
+                <li><span class="bullet green">✓</span><span>All data transmitted between AutoBoom and third-party
+                        services uses <strong>HTTPS (TLS encryption)</strong>. No data is sent in plaintext.</span></li>
+                <li><span class="bullet green">✓</span><span>Authentication tokens and API keys are stored locally in
+                        <code>chrome.storage.local</code> on your device and are never transmitted to AutoBoom's
+                        servers.</span></li>
+                <li><span class="bullet green">✓</span><span>AutoBoom does not operate any backend servers of its own.
+                        All server-side functionality is handled by Supabase Edge Functions and Stripe.</span></li>
+            </ul>
+        </div>
+
+        <!-- 5. How Data Is Stored -->
+        <div class="policy-section">
+            <h2><span class="section-icon">🗄️</span> 5. How Data Is Stored</h2>
+            <ul>
+                <li><span class="bullet">→</span><span><strong>Authentication & usage data</strong> — Stored securely
+                        in <a href="https://supabase.com" target="_blank">Supabase</a> (hosted on AWS, SOC 2
                         compliant).</span></li>
                 <li><span class="bullet">→</span><span><strong>Payment data</strong> — Processed by <a
                             href="https://stripe.com" target="_blank">Stripe</a>. We never see or store your card
                         details.</span></li>
-                <li><span class="bullet">→</span><span><strong>Local extension data</strong> — Project settings and
-                        session data are stored in <code>chrome.storage.local</code> on your device only.</span></li>
+                <li><span class="bullet">→</span><span><strong>Local extension data</strong> — Project settings, session
+                        data, API keys, and notification tokens are stored in <code>chrome.storage.local</code> on your
+                        device only. This data is never transmitted to AutoBoom.</span></li>
             </ul>
         </div>
 
-        <!-- 4. Permissions Explained -->
+        <!-- 6. Permissions Explained -->
         <div class="policy-section">
-            <h2><span class="section-icon">🔑</span> 4. Permissions Explained</h2>
+            <h2><span class="section-icon">🔑</span> 6. Permissions Explained</h2>
             <p>AutoBoom requests the following Chrome permissions:</p>
             <ul>
                 <li><span class="bullet">→</span><span><strong>activeTab, tabs</strong> — To interact with Google Flow
@@ -418,28 +566,28 @@
             </ul>
         </div>
 
-        <!-- 5. Third-Party Services -->
+        <!-- 7. Host Permissions Explained -->
         <div class="policy-section">
-            <h2><span class="section-icon">🔗</span> 5. Third-Party Services</h2>
-            <p>AutoBoom integrates with the following services:</p>
+            <h2><span class="section-icon">🌐</span> 7. Host Permissions Explained</h2>
+            <p>AutoBoom requests access to the following domains:</p>
             <ul>
-                <li><span class="bullet">→</span><span><strong>Google Flow</strong> (labs.google) — The target platform
-                        for automation. Your content stays within Google's infrastructure.</span></li>
-                <li><span class="bullet">→</span><span><strong>Supabase</strong> — Authentication and usage
-                        tracking.</span></li>
-                <li><span class="bullet">→</span><span><strong>Stripe</strong> — Payment processing for Premium
-                        subscriptions.</span></li>
-                <li><span class="bullet">→</span><span><strong>AI APIs</strong> (optional) — If you enable AI prompt
-                        rewriting, your prompt text may be sent to the AI provider you select (DeepSeek, OpenAI, Google
-                        Gemini, Anthropic, or OpenRouter). This is opt-in only.</span></li>
-                <li><span class="bullet">→</span><span><strong>Telegram / Discord</strong> (optional) — If you configure
-                        notifications, completion alerts are sent to your bot or webhook.</span></li>
+                <li><span class="bullet">→</span><span><strong>labs.google</strong> — Required to automate the Google
+                        Flow interface.</span></li>
+                <li><span class="bullet">→</span><span><strong>*.supabase.co</strong> — Required for authentication and
+                        usage tracking via Supabase.</span></li>
+                <li><span class="bullet">→</span><span><strong>AI API domains</strong> (api.deepseek.com,
+                        api.openai.com, generativelanguage.googleapis.com, api.anthropic.com, openrouter.ai) — Required
+                        only if you opt in to AI prompt rewriting.</span></li>
+                <li><span class="bullet">→</span><span><strong>api.telegram.org</strong> — Required only if you
+                        configure Telegram notifications.</span></li>
+                <li><span class="bullet">→</span><span><strong>discord.com</strong> — Required only if you configure
+                        Discord notifications.</span></li>
             </ul>
         </div>
 
-        <!-- 6. Data Retention -->
+        <!-- 8. Data Retention -->
         <div class="policy-section">
-            <h2><span class="section-icon">🕐</span> 6. Data Retention</h2>
+            <h2><span class="section-icon">🕐</span> 8. Data Retention</h2>
             <ul>
                 <li><span class="bullet green">✓</span><span>Account data is retained while your account is
                         active.</span></li>
@@ -447,30 +595,34 @@
                         hours.</span></li>
                 <li><span class="bullet green">✓</span><span>You can request account deletion by contacting us at the
                         email below.</span></li>
+                <li><span class="bullet green">✓</span><span>Uninstalling the extension removes all locally stored data
+                        immediately.</span></li>
             </ul>
         </div>
 
-        <!-- 7. Your Rights -->
+        <!-- 9. Your Rights -->
         <div class="policy-section">
-            <h2><span class="section-icon">⚖️</span> 7. Your Rights</h2>
+            <h2><span class="section-icon">⚖️</span> 9. Your Rights</h2>
             <p>You have the right to:</p>
             <ul>
                 <li><span class="bullet green">✓</span><span>Request access to your stored data.</span></li>
                 <li><span class="bullet green">✓</span><span>Request deletion of your account and all associated
                         data.</span></li>
+                <li><span class="bullet green">✓</span><span>Opt out of optional data sharing (AI rewriting, Telegram,
+                        Discord) at any time via Settings.</span></li>
                 <li><span class="bullet green">✓</span><span>Uninstall the extension at any time, which removes all
                         local data.</span></li>
             </ul>
         </div>
 
-        <!-- 8. Changes to This Policy -->
+        <!-- 10. Changes to This Policy -->
         <div class="policy-section">
-            <h2><span class="section-icon">📝</span> 8. Changes to This Policy</h2>
+            <h2><span class="section-icon">📝</span> 10. Changes to This Policy</h2>
             <p>We may update this policy from time to time. Changes will be posted on this page with an updated date.
                 Continued use of AutoBoom after changes constitutes acceptance.</p>
         </div>
 
-        <!-- 9. Contact -->
+        <!-- 11. Contact -->
         <div class="contact-card">
             <h2><span class="section-icon">💬</span> Contact</h2>
             <p>For questions or requests regarding your data:</p>
